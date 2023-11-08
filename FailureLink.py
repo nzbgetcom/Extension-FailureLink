@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 # FailureLink post-processing script for NZBGet
 #
