@@ -4,7 +4,6 @@
 #
 # Copyright (C) 2013-2014 Andrey Prygunkov <hugbug@users.sourceforge.net>
 # Copyright (c) 2013-2014 Clinton Hall <fock_wulf@hotmail.com>
-# Copyright (c) 2023 Denis <denis@nzbget.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,8 +32,9 @@
 #
 # Info about pp-script:
 # Author: Andrey Prygunkov (nzbget@gmail.com).
-# Further  modifications by Clinton Hall and dogzipp, Denis (denis@nzbget.com).
-# Web-site: https://github.com/nzbgetcom/Extension-FailureLink.
+# Further  modifications by Clinton Hall and dogzipp.
+# Web-site: http://nzbget.sourceforge.net/forum/viewforum.php?f=8.
+# Web-site: https://github.com/nzbgetcom/Extension-FailureLink/ (Python 3.11.x).
 # License: GPLv2 (http://www.gnu.org/licenses/gpl.html).
 # PP-Script Version: 1.21
 #
