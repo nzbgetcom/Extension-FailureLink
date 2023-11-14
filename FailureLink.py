@@ -34,7 +34,7 @@
 # Author: Andrey Prygunkov (nzbget@gmail.com).
 # Further  modifications by Clinton Hall and dogzipp.
 # Web-site: http://nzbget.sourceforge.net/forum/viewforum.php?f=8.
-# Web-site: https://github.com/nzbgetcom/Extension-FailureLink/ (Python 3.11.x).
+# Web-site: https://github.com/nzbgetcom/Extension-FailureLink/ (Python 3.9.x).
 # License: GPLv2 (http://www.gnu.org/licenses/gpl.html).
 # PP-Script Version: 1.21
 #
@@ -45,7 +45,7 @@
 # RSS). NZB-files queued from local disk don't have enough information
 # to contact the indexer site.
 #
-# NOTE: This script requires Python 3.11.x to be installed on your system.
+# NOTE: This script requires Python 3.9.x to be installed on your system.
 
 ##############################################################################
 ### OPTIONS                                                                ###

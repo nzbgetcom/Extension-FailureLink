@@ -1,8 +1,10 @@
 > **Note:** this repo is a fork of the original github [project](https://github.com/nzbget/FailureLink)
 > made by @hugbug.
 
-> **Note:** This script is compatible with python 3.11.x. 
-> If you need compatibility with Python 2.x, then you should look into the original [repository](https://github.com/nzbget/FailureLink).
+> **Note:** This script is compatible with python 3.9.x and above.
+[Here](https://github.com/nzbgetcom/nzbget/discussions/56) you can discuss problems with different versions of Python.
+
+> **Note:** If you need support for older versions of python, you can try your luck with older [releases](https://github.com/nzbget/FailureLink/releases).
 
 # FailureLink
 FailureLink [script](https://nzbget.com/documentation/post-processing-scripts/) for [NZBGet](https://nzbget.com).
