@@ -92,17 +92,20 @@
 
 ### NZBGET POST-PROCESSING SCRIPT                                          ###
 ##############################################################################
+
 import os
 import sys
 import platform
 import subprocess
+import traceback
 import json
-import urllib.request, urllib.error, urllib.parse
+import ssl
 import cgi
 import shutil
-from subprocess import call
-from xmlrpc.client import ServerProxy
 from base64 import standard_b64encode
+from xmlrpc.client import ServerProxy
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 
 # Exit codes used by NZBGet
 POSTPROCESS_SUCCESS=93
@@ -123,135 +126,135 @@ delete=os.environ.get('NZBPO_DELETE', 'no') == 'yes'
 
 nzbget = None
 
-MEDIACONTAINER = (os.environ['NZBPO_MEDIAEXTENSIONS']).split(',')
+MEDIACONTAINER = (os.environ.get('NZBPO_MEDIAEXTENSIONS', 'False')).split(',')
 PROGRAM_DIR = os.path.normpath(os.path.abspath(os.path.join(__file__, os.pardir)))
 CHECKVIDEO = os.environ.get('NZBPO_CHECKVID', 'no') == 'yes'
 if 'NZBPO_TESTVID' in os.environ and os.path.isfile(os.environ['NZBPO_TESTVID']):
-	TEST_FILE = os.environ['NZBPO_TESTVID']
+    TEST_FILE = os.environ['NZBPO_TESTVID']
 else:
-	TEST_FILE = None
+    TEST_FILE = None
 FFPROBE = None
 
 if 'NZBPO_FFPROBE' in os.environ and os.environ['NZBPO_FFPROBE'] != "":
-	if os.path.isfile(os.environ['NZBPO_FFPROBE']) or os.access(os.environ['NZBPO_FFPROBE'], os.X_OK):
-		FFPROBE = os.environ['NZBPO_FFPROBE']
+    if os.path.isfile(os.environ['NZBPO_FFPROBE']) or os.access(os.environ['NZBPO_FFPROBE'], os.X_OK):
+        FFPROBE = os.environ['NZBPO_FFPROBE']
 if CHECKVIDEO and not FFPROBE:
-	if platform.system() == 'windows': 
-		if os.path.isfile(os.path.join(PROGRAM_DIR, 'ffprobe.exe')):
-			FFPROBE = os.path.join(PROGRAM_DIR, 'ffprobe.exe')
-	elif os.path.isfile(os.path.join(PROGRAM_DIR, 'ffprobe')) or os.access(os.path.join(PROGRAM_DIR, 'ffprobe'), os.X_OK): 
-		FFPROBE = os.path.join(PROGRAM_DIR, 'ffprobe')
-	elif os.path.isfile(os.path.join(PROGRAM_DIR, 'avprobe')) or os.access(os.path.join(PROGRAM_DIR, 'avprobe'), os.X_OK): 
-		FFPROBE = os.path.join(PROGRAM_DIR, 'avprobe')
-	else:
-		try:
-			FFPROBE = subprocess.Popen(['which', 'ffprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
-		except: pass
-		if not FFPROBE: 
-			try:
-				FFPROBE = subprocess.Popen(['which', 'avprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
-			except: pass
+    if platform.system() == 'windows': 
+        if os.path.isfile(os.path.join(PROGRAM_DIR, 'ffprobe.exe')):
+            FFPROBE = os.path.join(PROGRAM_DIR, 'ffprobe.exe')
+    elif os.path.isfile(os.path.join(PROGRAM_DIR, 'ffprobe')) or os.access(os.path.join(PROGRAM_DIR, 'ffprobe'), os.X_OK): 
+        FFPROBE = os.path.join(PROGRAM_DIR, 'ffprobe')
+    elif os.path.isfile(os.path.join(PROGRAM_DIR, 'avprobe')) or os.access(os.path.join(PROGRAM_DIR, 'avprobe'), os.X_OK): 
+        FFPROBE = os.path.join(PROGRAM_DIR, 'avprobe')
+    else:
+        try:
+            FFPROBE = subprocess.Popen(['which', 'ffprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
+        except: pass
+        if not FFPROBE: 
+            try:
+                FFPROBE = subprocess.Popen(['which', 'avprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
+            except: pass
 if CHECKVIDEO and FFPROBE:
-	result = 1
-	devnull = open(os.devnull, 'w')
-	try:
-		command = [FFPROBE, '-h']
-		proc = subprocess.Popen(command, stdout=devnull, stderr=devnull)
-		out, err = proc.communicate()
-		result = proc.returncode
-	except:
-		FFPROBE = None
-	devnull.close()
-	if result:
-		FFPROBE = None
+    result = 1
+    devnull = open(os.devnull, 'w')
+    try:
+        command = [FFPROBE, '-h']
+        proc = subprocess.Popen(command, stdout=devnull, stderr=devnull)
+        out, err = proc.communicate()
+        result = proc.returncode
+    except:
+        FFPROBE = None
+    devnull.close()
+    if result:
+        FFPROBE = None
 if CHECKVIDEO and not FFPROBE:
-	print("[WARNING] Failed to locate ffprobe, video corruption detection disabled!")
-	print("[WARNING] Install ffmpeg with x264 support to enable this feature  ...")
+    print('[WARNING] Failed to locate ffprobe, video corruption detection disabled!')
+    print('[WARNING] Install ffmpeg with x264 support to enable this feature  ...')
 
 def isVideoGood(videofile):
-	fileNameExt = os.path.basename(videofile)
-	fileName, fileExt = os.path.splitext(fileNameExt)
-	disable = False
-	if fileExt not in MEDIACONTAINER or not FFPROBE:
-		return True
+    fileNameExt = os.path.basename(videofile)
+    fileName, fileExt = os.path.splitext(fileNameExt)
+    disable = False
+    if fileExt not in MEDIACONTAINER or not FFPROBE:
+        return True
 
-	print("[INFO] Checking [%s] for corruption, please stand by ..." % (fileNameExt))
-	video_details, result = getVideoDetails(videofile)
+    print('[INFO] Checking [%s] for corruption, please stand by ...' % (fileNameExt))
+    video_details, result = getVideoDetails(videofile)
 
-	if result != 0:
-		print("[Error] FAILED: [%s] is corrupted!" % (fileNameExt))
-		return False
-	if video_details.get("error"):
-		print("[INFO] FAILED: [%s] returned error [%s]." % (fileNameExt, str(video_details.get("error"))))
-		return False
-	if video_details.get("streams"):
-		videoStreams = [item for item in video_details["streams"] if item["codec_type"] == "video"]
-		audioStreams = [item for item in video_details["streams"] if item["codec_type"] == "audio"]
-		if len(videoStreams) > 0 and len(audioStreams) > 0:
-			print("[INFO] SUCCESS: [%s] has no corruption." % (fileNameExt))
-			return True
-		else:
-			print("[INFO] FAILED: [%s] has %s video streams and %s audio streams. Assume corruption." % (fileNameExt, str(len(videoStreams)), str(len(audioStreams))))
-			return False
+    if result != 0:
+        print('[Error] FAILED: [%s] is corrupted!' % (fileNameExt))
+        return False
+    if video_details.get("error"):
+        print('[INFO] FAILED: [%s] returned error [%s].' % (fileNameExt, str(video_details.get("error"))))
+        return False
+    if video_details.get("streams"):
+        videoStreams = [item for item in video_details["streams"] if item["codec_type"] == "video"]
+        audioStreams = [item for item in video_details["streams"] if item["codec_type"] == "audio"]
+        if len(videoStreams) > 0 and len(audioStreams) > 0:
+            print('[INFO] SUCCESS: [%s] has no corruption.' % (fileNameExt))
+            return True
+        else:
+            print('[INFO] FAILED: [%s] has %s video streams and %s audio streams. Assume corruption.' % (fileNameExt, str(len(videoStreams)), str(len(audioStreams))))
+            return False
 
 def getVideoDetails(videofile):
-	video_details = {}
-	result = 1
-	if not FFPROBE:
-		return video_details, result
-	if 'avprobe' in FFPROBE:
-		print_format = '-of'
-	else:
-		print_format = '-print_format'
-	try:
-		command = [FFPROBE, '-v', 'quiet', print_format, 'json', '-show_format', '-show_streams', '-show_error', videofile]
-		proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-		out, err = proc.communicate()
-		result = proc.returncode
-		video_details = json.loads(out)
-	except: pass
-	if not video_details:
-		try:
-			command = [FFPROBE, '-v', 'quiet', print_format, 'json', '-show_format', '-show_streams', videofile]
-			proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-			out, err = proc.communicate()
-			result = proc.returncode
-			video_details = json.loads(out)
-		except:
-			print("[ERROR] Checking [%s] has failed" % (videofile))
-	return video_details, result
+    video_details = {}
+    result = 1
+    if not FFPROBE:
+        return video_details, result
+    if 'avprobe' in FFPROBE:
+        print_format = '-of'
+    else:
+        print_format = '-print_format'
+    try:
+        command = [FFPROBE, '-v', 'quiet', print_format, 'json', '-show_format', '-show_streams', '-show_error', videofile]
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+        out, err = proc.communicate()
+        result = proc.returncode
+        video_details = json.loads(out)
+    except: pass
+    if not video_details:
+        try:
+            command = [FFPROBE, '-v', 'quiet', print_format, 'json', '-show_format', '-show_streams', videofile]
+            proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+            out, err = proc.communicate()
+            result = proc.returncode
+            video_details = json.loads(out)
+        except:
+            print('[ERROR] Checking [%s] has failed' % (videofile))
+    return video_details, result
 
 
 def corruption_check():
-	corrupt = False
-	if not CHECKVIDEO:
-		return corrupt
-	if not TEST_FILE: 
-		ffprobe_Tested = False
-	elif isVideoGood(TEST_FILE):
-		ffprobe_Tested = True
-	else:
-		print("[INFO] DISABLED: ffprobe failed to analyse streams from test file. Stopping corruption check.")
-		return corrupt
+    corrupt = False
+    if not CHECKVIDEO:
+        return corrupt
+    if not TEST_FILE: 
+        ffprobe_Tested = False
+    elif isVideoGood(TEST_FILE):
+        ffprobe_Tested = True
+    else:
+        print('[INFO] DISABLED: ffprobe failed to analyse streams from test file. Stopping corruption check.')
+        return corrupt
    
-	num_files = 0
-	good_files = 0
-	for dir, dirs, files in os.walk(os.environ['NZBPP_DIRECTORY']):
-		for file in files:
-			if os.path.split(dir)[1][0] == '.':  # hidden directory.
-				continue
-			filepath = os.path.join(dir, file)
-			num_files += 1
-			if isVideoGood(filepath):
-				good_files += 1
-	if num_files > 0 and good_files < num_files:
-		print("[INFO] Corrupt video file found.")
-		corrupt = True
-		# check for NZBGet V14+
-		NZBGetVersion=os.environ['NZBOP_VERSION']
-		if NZBGetVersion[0:5] >= '14.0':
-			print('[NZB] MARK=BAD')
-	return corrupt
+    num_files = 0
+    good_files = 0
+    for dir, dirs, files in os.walk(os.environ['NZBPP_DIRECTORY']):
+        for file in files:
+            if os.path.split(dir)[1][0] == '.':  # hidden directory.
+                continue
+            filepath = os.path.join(dir, file)
+            num_files += 1
+            if isVideoGood(filepath):
+                good_files += 1
+    if num_files > 0 and good_files < num_files:
+        print('[INFO] Corrupt video file found.')
+        corrupt = True
+        # check for NZBGet V14+
+        NZBGetVersion=os.environ['NZBOP_VERSION']
+        if NZBGetVersion[0:5] >= '14.0':
+            print('[NZB] MARK=BAD')
+    return corrupt
 
 def downloadNzb(failure_link):
 	# Contact indexer site
@@ -266,19 +269,26 @@ def downloadNzb(failure_link):
 	
 	try:
 		headers = {'User-Agent' : 'NZBGet (FailureLink)'}
-		req = urllib.request.Request(failure_link, None, headers)
-		response = urllib.request.urlopen(req)
+		req = Request(failure_link, None, headers)
+		try:
+			response = urlopen(req)
+		except:
+			print('[WARNING] SSL certificate verify failed, retry with bypass SSL cert.')
+			context = ssl._create_unverified_context()
+			response = urlopen(req, context=context)
+		else:
+			pass
 		if download_another_release:
 			nzbcontent = response.read()
 			headers = response.info()
-	except urllib.error.HTTPError as e:
+	except HTTPError as e:
 		if e.code == 404:
 			print('[INFO] No other releases found') 
 		else:
-			print(('[ERROR] %s' % e.code))
+			print('[ERROR] %s' % e.code)
 			sys.exit(POSTPROCESS_ERROR)
 	except Exception as err:
-		print(('[ERROR] %s' % err))
+		print('[ERROR] %s' % err)
 		sys.exit(POSTPROCESS_ERROR)
 
 	return nzbcontent, headers
@@ -309,7 +319,7 @@ def queueNzb(filename, category, nzbcontent64):
 	# Adding nzb-file to queue
 	# Signature:
 	# append(string NZBFilename, string Category, int Priority, bool AddToTop, string Content,
-	#	 bool AddPaused, string DupeKey, int DupeScore, string DupeMode)
+	#     bool AddPaused, string DupeKey, int DupeScore, string DupeMode)
 	nzbget.append(filename, category, 0, True, nzbcontent64, True, '', 0, 'ALL')
 
 	# We need to find the id of the added nzb-file
@@ -323,7 +333,7 @@ def queueNzb(filename, category, nzbcontent64):
 			break;
 
 	if verbose:
-		print(('GroupID: %i' % groupid))
+		print('GroupID: %i' % groupid)
 
 	return groupid
 
@@ -331,12 +341,12 @@ def queueNzb(filename, category, nzbcontent64):
 def setupDnzbHeaders(groupid, headers):
 	for header in headers.headers:
 		if verbose:
-			print((header.strip()))
+			print(header.strip())
 		if header[0:7] == 'X-DNZB-':
 			name = header.split(':')[0].strip()
 			value = headers.get(name)
 			if verbose:
-				print(('%s=%s' % (name, value)))
+				print('%s=%s' % (name, value))
 				
 			# Setting "X-DNZB-" as post-processing parameter
 			param = '*DNZB:%s=%s' % (name[7:], value)
@@ -365,91 +375,91 @@ def onerror(func, path, exc_info):
 		raise
 
 def rmDir(dirName):
-	print(("[INFO] Deleting %s" % (dirName)))
+	print('[INFO] Deleting %s' % (dirName))
 	try:
 		shutil.rmtree(dirName, onerror=onerror)
 	except:
-		print(("[ERROR] Unable to delete folder %s" % (dirName)))
+		print('[ERROR] Unable to delete folder %s' % (dirName))
 
 def main():
-	# Check par and unpack status for errors.
-	#  NZBPP_PARSTATUS	- result of par-check:
-	#					   0 = not checked: par-check is disabled or nzb-file does
-	#						   not contain any par-files;
-	#					   1 = checked and failed to repair;
-	#					   2 = checked and successfully repaired;
-	#					   3 = checked and can be repaired but repair is disabled.
-	#					   4 = par-check needed but skipped (option ParCheck=manual);
-	#  NZBPP_UNPACKSTATUS - result of unpack:
-	#					   0 = unpack is disabled or was skipped due to nzb-file
-	#						   properties or due to errors during par-check;
-	#					   1 = unpack failed;
-	#					   2 = unpack successful.
+        # Check par and unpack status for errors.
+        #  NZBPP_PARSTATUS    - result of par-check:
+        #                       0 = not checked: par-check is disabled or nzb-file does
+        #                           not contain any par-files;
+        #                       1 = checked and failed to repair;
+        #                       2 = checked and successfully repaired;
+        #                       3 = checked and can be repaired but repair is disabled.
+        #                       4 = par-check needed but skipped (option ParCheck=manual);
+        #  NZBPP_UNPACKSTATUS - result of unpack:
+        #                       0 = unpack is disabled or was skipped due to nzb-file
+        #                           properties or due to errors during par-check;
+        #                       1 = unpack failed;
+        #                       2 = unpack successful.
 	
-	failure = os.environ['NZBPP_PARSTATUS'] == '1' or os.environ['NZBPP_UNPACKSTATUS'] == '1' or os.environ.get('NZBPP_PPSTATUS_FAKE') == 'yes'
-	failure_link = os.environ.get('NZBPR__DNZB_FAILURE')
-	if failure:
-		corrupt = False
-	else:
-		corrupt = corruption_check()
-		if corrupt and failure_link:
-			failure_link = failure_link + '&corrupt=true'
+        failure = os.environ.get('NZBPP_PARSTATUS', 'False') == '1' or os.environ.get('NZBPP_UNPACKSTATUS', 'False') == '1' or os.environ.get('NZBPP_PPSTATUS_FAKE') == 'yes'
+        failure_link = os.environ.get('NZBPR__DNZB_FAILURE')
+        if failure:
+            corrupt = False
+        else:
+            corrupt = corruption_check()
+            if corrupt and failure_link:
+                failure_link = failure_link + '&corrupt=true'
 
-	if not (failure or corrupt):
-		sys.exit(POSTPROCESS_SUCCESS)
+        if not (failure or corrupt):
+                sys.exit(POSTPROCESS_SUCCESS)
 
-	if delete and os.path.isdir(os.environ['NZBPP_DIRECTORY']):
-		rmDir(os.environ['NZBPP_DIRECTORY'])
+        if delete and os.path.isdir(os.environ['NZBPP_DIRECTORY']):
+                rmDir(os.environ['NZBPP_DIRECTORY'])
 
-	if not failure_link:
-		sys.exit(POSTPROCESS_SUCCESS)
-	
-	nzbcontent, headers = downloadNzb(failure_link)
+        if not failure_link:
+                sys.exit(POSTPROCESS_SUCCESS)
 
-	if not download_another_release:
-		sys.exit(POSTPROCESS_SUCCESS)
+        nzbcontent, headers = downloadNzb(failure_link)
 
-	if verbose:
-		print(headers)
-	
-	if not nzbcontent or nzbcontent[0:5] != '<?xml':
-		print('[INFO] No other releases found')
-		if verbose and nzbcontent:
-			print(nzbcontent)
-		sys.exit(POSTPROCESS_SUCCESS)
-	
-	print('[INFO] Another release found, adding to queue')
-	sys.stdout.flush()
-	
-	# Parsing filename from headers
+        if not download_another_release:
+                sys.exit(POSTPROCESS_SUCCESS)
 
-	params = cgi.parse_header(headers.get('Content-Disposition', ''))
-	if verbose:
-		print(params)
+        if verbose:
+                print(headers)
 
-	filename = params[1].get('filename', '')
-	if verbose:
-		print(('filename: %s' % filename))
-	
-	# Parsing category from headers
+        if not nzbcontent or nzbcontent[0:5] != '<?xml':
+                print('[INFO] No other releases found')
+                if verbose and nzbcontent:
+                        print(nzbcontent)
+                sys.exit(POSTPROCESS_SUCCESS)
 
-	category = headers.get('X-DNZB-Category', '');
-	if verbose:
-		print(('category: %s' % category))
+        print('[INFO] Another release found, adding to queue')
+        sys.stdout.flush()
 
-	# Encode nzb-file content into base64
-	nzbcontent64=standard_b64encode(nzbcontent)
-	nzbcontent = None
+        # Parsing filename from headers
 
-	connectToNzbGet()
-	groupid = queueNzb(filename, category, nzbcontent64)
-	if groupid == 0:
-		print('[WARNING] Could not find added nzb-file in the list of downloads')
-		sys.stdout.flush()
-		sys.exit(POSTPROCESS_ERROR)
+        params = cgi.parse_header(headers.get('Content-Disposition', ''))
+        if verbose:
+                print(params)
 
-	setupDnzbHeaders(groupid, headers)
-	unpauseGroup(groupid)
+        filename = params[1].get('filename', '')
+        if verbose:
+                print('filename: %s' % filename)
+
+        # Parsing category from headers
+
+        category = headers.get('X-DNZB-Category', '');
+        if verbose:
+                print('category: %s' % category)
+
+        # Encode nzb-file content into base64
+        nzbcontent64=standard_b64encode(nzbcontent)
+        nzbcontent = None
+
+        connectToNzbGet()
+        groupid = queueNzb(filename, category, nzbcontent64)
+        if groupid == 0:
+                print('[WARNING] Could not find added nzb-file in the list of downloads')
+                sys.stdout.flush()
+                sys.exit(POSTPROCESS_ERROR)
+
+        setupDnzbHeaders(groupid, headers)
+        unpauseGroup(groupid)
 main()
 
 # All OK, returning exit status 'POSTPROCESS_SUCCESS' (int <93>) to let NZBGet know
