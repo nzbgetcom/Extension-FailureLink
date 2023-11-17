@@ -2,9 +2,11 @@
 > made by @hugbug.
 
 > **Note:** This script is compatible with python 3.9.x and above.
-[Here](https://github.com/nzbgetcom/nzbget/discussions/56) you can discuss problems with different versions of Python.
 
-> **Note:** If you need support for older versions of python, you can try your luck with older [releases](https://github.com/nzbget/FailureLink/releases).
+> **Note:** If you need support for Python 2.x or older Python3.x versions please use [v1.21](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v1.21) release.
+
+> **Note:** [Here](https://github.com/nzbgetcom/nzbget/discussions/56) you can discuss problems with different versions of Python.
+
 
 # FailureLink
 FailureLink [script](https://nzbget.com/documentation/post-processing-scripts/) for [NZBGet](https://nzbget.com).

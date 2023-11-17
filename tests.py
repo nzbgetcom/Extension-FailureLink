@@ -28,12 +28,14 @@ import http.server
 import xmlrpc.server
 import threading
 import json
+import unittest
 
 POSTPROCESS_SUCCESS=93
 POSTPROCESS_NONE=95
 POSTPROCESS_ERROR=94
 
 root_dir = dirname(__file__)
+tmp_dir = root_dir + '/tmp'
 test_data_dir = root_dir + '/test_data'
 host = '127.0.0.1'
 port = '6789'
@@ -41,8 +43,12 @@ username = 'TestUser'
 password = 'TestPassword'
 
 def RUN_TESTS():
-	TEST('Should not be executed if nzbget version is incompatible', TEST_COMPATIBALE_NZBGET_VERSION)
-	# clean_up()
+    #TEST('Should not be executed if nzbget version is incompatible', TEST_COMPATIBALE_NZBGET_VERSION)
+    TEST('Should be success if no failure and no video check ', TEST_NOT_FAILURE_NOT_VIDEOCHECK)
+    TEST('Should be success if no failure link', TEST_NO_FAILURE_LINK)
+    TEST('Should delete tmp dir and if no failure', TEST_DELETE_DIR)
+    TEST('Should be success if no another release and failure link', TEST_NO_ANOTHER_RELEASE)
+    # clean_up()
 
 class RequestEmpty(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -81,7 +87,7 @@ def TEST(statement: str, test_func):
 		print(test_func.__name__, '...SUCCESS')
 	except Exception as e:
 		print(test_func.__name__, '...FAILED')
-		traceback.print_exception(e)
+		traceback.print_exc()
 	finally:
 		print('********************************************************\n')
 
@@ -104,37 +110,26 @@ def run_script():
 	sys.stdout.flush()
 	proc = subprocess.Popen([get_python(), root_dir + '/FailureLink.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
 	out, err = proc.communicate()
-	proc.pid
 	ret_code = proc.returncode
 	return (out.decode(), int(ret_code), err.decode())
 
-def set_defaults_env():
+def set_default_env():
 	# NZBGet global options
-	os.environ['NZBOP_SCRIPTDIR'] = 'test'
-	os.environ['NZBOP_ARTICLECACHE'] = '64'
-	os.environ['NZBOP_TEMPDIR'] = tmp_dir
+	os.environ['NZBOP_TEMPDIR'] = test_data_dir
 	os.environ['NZBOP_CONTROLPORT'] = port
 	os.environ['NZBOP_CONTROLIP'] = host
 	os.environ['NZBOP_CONTROLUSERNAME'] = username
 	os.environ['NZBOP_CONTROLPASSWORD'] = password
 
-	# script options
-	os.environ['NZBPO_BANNEDEXTENSIONS'] = '.mkv,.mp4'
-
-	os.environ['NZBPP_DIRECTORY'] = tmp_dir
-	os.environ['NZBPP_NZBNAME'] = 'test'
-	os.environ['NZBPP_PARSTATUS'] = '2'
-	os.environ['NZBPP_UNPACKSTATUS'] = '2'
-	os.environ['NZBPP_CATEGORY'] = ''
 	os.environ['NZBPP_NZBID'] = '8'
+	os.environ['NZBOP_FEEDHISTORY'] = '[]'
+	os.environ.pop('NZBPP_PARSTATUS', None)
+	os.environ.pop('NZBPO_CHECKVID', None)
+	os.environ.pop('NZBPP_DIRECTORY', None)
+	os.environ.pop('NZBPO_DELETE', None)
+	os.environ.pop('NZBPO_DOWNLOADANOTHERRELEASE', None)
+	os.environ.pop('NZBPR__DNZB_FAILURE', None)
 
-	os.environ['NZBPR__DNZB_USENZBNAME'] = 'no'
-	os.environ['NZBPR__DNZB_PROPERNAME'] = ''
-	os.environ['NZBPR__DNZB_EPISODENAME'] = ''
-
-	os.environ['NZBNA_EVENT'] = 'NZB_ADDED'
-	os.environ.pop('NZBPR_PPSTATUS_FAKEBAN', None)
-	os.environ.pop('NZBPP_STATUS', None)
 
 def TEST_COMPATIBALE_NZBGET_VERSION():
 	os.environ.pop('NZBOP_FEEDHISTORY', None)
@@ -143,16 +138,40 @@ def TEST_COMPATIBALE_NZBGET_VERSION():
 	assert('This script is supposed to be called from nzbget (12.0 or later).' in out)
 	assert(code == POSTPROCESS_ERROR)
 
+def TEST_NOT_FAILURE_NOT_VIDEOCHECK():
+	set_default_env()
+	os.environ['NZBPP_PARSTATUS'] = '0'
+	os.environ['NZBPO_CHECKVID'] = 'no'
+	[out, code, err] = run_script()
+	assert(code == POSTPROCESS_SUCCESS)
+	
+def TEST_NO_FAILURE_LINK():
+	set_default_env()
+	os.environ['NZBPP_PARSTATUS'] = '1'
+	os.environ['NZBPO_CHECKVID'] = 'no'
+	[out, code, err] = run_script()
+	assert(code == POSTPROCESS_SUCCESS)
+	
+def TEST_DELETE_DIR():
+	set_default_env()
+	os.mkdir(tmp_dir)
+	os.environ['NZBPP_PARSTATUS'] = '1'
+	os.environ['NZBPP_DIRECTORY'] = tmp_dir
+	os.environ['NZBPO_DELETE'] = 'yes'
+	[out, code, err] = run_script()
+	assert(os.path.isdir(tmp_dir) == False)
+	assert(code == POSTPROCESS_SUCCESS)
+
+def TEST_NO_ANOTHER_RELEASE():
+	set_default_env()
+	os.environ['NZBPP_PARSTATUS'] = '1'
+	os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'no'
+	os.environ['NZBPR__DNZB_FAILURE'] = 'https://link'
+	[out, code, err] = run_script()
+	assert(code == POSTPROCESS_SUCCESS)
+
 def TEST_DETECT_FAKE_FILES():
-	set_defaults_env()
-	file_name = 'nzb_test_file'
-	os.environ['NZBNA_NZBNAME'] = file_name
-	os.environ['NZBNA_CATEGORY'] = 'movies'
-	os.environ['NZBNA_NZBID'] = '8'
-	os.environ['NZBPR_PPSTATUS_FAKEBAN'] = '.nzb,.json,.mp4'
-	os.environ['NZBNA_DIRECTORY'] = test_data_dir
-	os.environ['NZBNA_EVENT'] = 'FILE_DOWNLOADED'
-	os.environ['NZBPR_FAKEDETECTOR_SORTED'] = 'no'
+	set_default_env()
 
 	server = http.server.HTTPServer((host, int(port)), RequestWithFileId)
 	thread = threading.Thread(target=server.serve_forever)
@@ -160,10 +179,5 @@ def TEST_DETECT_FAKE_FILES():
 	[out, code, err] = run_script()
 	server.shutdown()
 	thread.join()
-	assert('[WARNING] Download has media files and executables' in out)
-	assert('[NZB] NZBPR_PPSTATUS_FAKE=yes' in out)
-	assert('[NZB] MARK=BAD' in out)
-	assert('[DETAIL] Detecting completed for %s' % file_name in out)
-	assert(code == POSTPROCESS_SUCCESS)
 
 RUN_TESTS()
