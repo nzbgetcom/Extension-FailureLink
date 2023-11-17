@@ -1,0 +1,12 @@
+[
+    {
+        "ID": 2,
+        "Filename": "file.part2.rar",
+        "NZBName": "1.nzb"
+    },
+    {
+        "ID": 1,
+        "Filename": "file.part1.rar",
+        "NZBName": "1.nzb"
+    }
+]

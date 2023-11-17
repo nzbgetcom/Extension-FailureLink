@@ -97,11 +97,11 @@ import os
 import sys
 import platform
 import subprocess
-import traceback
 import json
 import ssl
 import cgi
 import shutil
+import stat
 from base64 import standard_b64encode
 from xmlrpc.client import ServerProxy
 from urllib.request import urlopen, Request
@@ -443,7 +443,7 @@ def main():
 
         # Parsing category from headers
 
-        category = headers.get('X-DNZB-Category', '');
+        category = headers.get('X-DNZB-Category', '')
         if verbose:
                 print('category: %s' % category)
 
