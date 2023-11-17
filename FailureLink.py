@@ -104,7 +104,7 @@ import shutil
 import stat
 from base64 import standard_b64encode
 from xmlrpc.client import ServerProxy
-from urllib.request import urlopen, Request
+import urllib.request, urllib.error
 from urllib.error import HTTPError
 
 # Exit codes used by NZBGet
@@ -269,13 +269,13 @@ def downloadNzb(failure_link):
 	
 	try:
 		headers = {'User-Agent' : 'NZBGet (FailureLink)'}
-		req = Request(failure_link, None, headers)
+		req = urllib.request.Request(failure_link, None, headers)
 		try:
-			response = urlopen(req)
+			response = urllib.request.urlopen(req)
 		except:
 			print('[WARNING] SSL certificate verify failed, retry with bypass SSL cert.')
 			context = ssl._create_unverified_context()
-			response = urlopen(req, context=context)
+			response = urllib.request.urlopen(req, context=context)
 		else:
 			pass
 		if download_another_release:
@@ -422,7 +422,7 @@ def main():
         if verbose:
                 print(headers)
 
-        if not nzbcontent or nzbcontent[0:5] != '<?xml':
+        if not nzbcontent or nzbcontent[0:5] != b'<?xml':
                 print('[INFO] No other releases found')
                 if verbose and nzbcontent:
                         print(nzbcontent)

@@ -23,12 +23,9 @@ from os.path import dirname
 import os
 import traceback
 import subprocess
-import json
 import http.server
-import xmlrpc.server
+import xmlrpc
 import threading
-import json
-import unittest
 
 POSTPROCESS_SUCCESS=93
 POSTPROCESS_NONE=95
@@ -43,11 +40,12 @@ username = 'TestUser'
 password = 'TestPassword'
 
 def RUN_TESTS():
-    #TEST('Should not be executed if nzbget version is incompatible', TEST_COMPATIBALE_NZBGET_VERSION)
+    TEST('Should not be executed if nzbget version is incompatible', TEST_COMPATIBALE_NZBGET_VERSION)
     TEST('Should be success if no failure and no video check ', TEST_NOT_FAILURE_NOT_VIDEOCHECK)
     TEST('Should be success if no failure link', TEST_NO_FAILURE_LINK)
     TEST('Should delete tmp dir and if no failure', TEST_DELETE_DIR)
-    TEST('Should be success if no another release and failure link', TEST_NO_ANOTHER_RELEASE)
+    TEST('Should check video corruption without ffprobe', TEST_CHECK_VIDEO_CORRUPTION_WITHOUT_FFPROBE)
+    TEST('Should download another release', TEST_DOWNLOAD_ANOTHER_RELEASE)
     # clean_up()
 
 class RequestEmpty(http.server.BaseHTTPRequestHandler):
@@ -60,22 +58,13 @@ class RequestEmpty(http.server.BaseHTTPRequestHandler):
 class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
 		self.send_response(200)
-		f = open(test_data_dir + '/nzbget_response.json')
-		data = json.load(f)
-		self.send_header("Content-Type", "application/json")
+		self.send_header("Content-Type", "text/plain")
+		self.send_header("Content-Dusposition", "filename='1.nzb'")
+		self.send_header("X-DNZB-Category", "movie")
 		self.end_headers()
-		formatted = json.dumps(data, separators=(',\n', ' : '), indent=0)
-		self.wfile.write(formatted.encode('utf-8'))
+		f = open(test_data_dir + '/1.nzb', 'rb')
+		self.wfile.write(f.read())
 		f.close()
-
-	def do_POST(self):
-		self.log_request()
-		self.send_response(200)
-		self.send_header("Content-Type", "text/xml")
-		self.end_headers()
-		data = '<?xml version="1.0" encoding="UTF-8"?><nzb></nzb>'
-		response = xmlrpc.client.dumps((data,), allow_none=False, encoding=None)
-		self.wfile.write(response.encode('utf-8'))
 
 def TEST(statement: str, test_func):
 	print('\n********************************************************')
@@ -125,10 +114,13 @@ def set_default_env():
 	os.environ['NZBOP_FEEDHISTORY'] = '[]'
 	os.environ.pop('NZBPP_PARSTATUS', None)
 	os.environ.pop('NZBPO_CHECKVID', None)
+	os.environ.pop('NZBPO_TESTVID', None)
 	os.environ.pop('NZBPP_DIRECTORY', None)
 	os.environ.pop('NZBPO_DELETE', None)
 	os.environ.pop('NZBPO_DOWNLOADANOTHERRELEASE', None)
 	os.environ.pop('NZBPR__DNZB_FAILURE', None)
+	os.environ.pop('NZBPO_MEDIAEXTENSIONS', None)
+	os.environ.pop('NZBPO_FFPROBE', None)
 
 
 def TEST_COMPATIBALE_NZBGET_VERSION():
@@ -162,22 +154,36 @@ def TEST_DELETE_DIR():
 	assert(os.path.isdir(tmp_dir) == False)
 	assert(code == POSTPROCESS_SUCCESS)
 
-def TEST_NO_ANOTHER_RELEASE():
+def TEST_CHECK_VIDEO_CORRUPTION_WITHOUT_FFPROBE():
 	set_default_env()
-	os.environ['NZBPP_PARSTATUS'] = '1'
+	os.environ['NZBPP_PARSTATUS'] = '0'
 	os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'no'
 	os.environ['NZBPR__DNZB_FAILURE'] = 'https://link'
+	os.environ['NZBPO_CHECKVID'] = 'yes'
+	os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
+	os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
+	os.environ['NZBPP_DIRECTORY'] = test_data_dir
 	[out, code, err] = run_script()
+	assert('[WARNING] Failed to locate ffprobe, video corruption detection disabled!' in out)
+	assert('[WARNING] Install ffmpeg with x264 support to enable this feature  ...' in out)
 	assert(code == POSTPROCESS_SUCCESS)
-
-def TEST_DETECT_FAKE_FILES():
+	
+def TEST_DOWNLOAD_ANOTHER_RELEASE():
 	set_default_env()
-
+	os.environ['NZBPP_PARSTATUS'] = '1'
+	os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'yes'
+	os.environ['NZBPR__DNZB_FAILURE'] = 'http://127.0.0.1:6789'
+	os.environ['NZBPO_CHECKVID'] = 'yes'
+	os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
+	os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
+	os.environ['NZBPP_DIRECTORY'] = test_data_dir
 	server = http.server.HTTPServer((host, int(port)), RequestWithFileId)
 	thread = threading.Thread(target=server.serve_forever)
 	thread.start()
 	[out, code, err] = run_script()
 	server.shutdown()
 	thread.join()
+	assert('[INFO] Requesting another release from indexer site' in out)
+	assert(code == POSTPROCESS_SUCCESS)
 
 RUN_TESTS()
