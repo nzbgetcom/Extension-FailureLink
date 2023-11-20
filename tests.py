@@ -48,22 +48,25 @@ def RUN_TESTS():
     TEST('Should download another release', TEST_DOWNLOAD_ANOTHER_RELEASE)
     # clean_up()
 
-class RequestEmpty(http.server.BaseHTTPRequestHandler):
-	def do_GET(self):
-		self.send_response(200)
-		self.send_header("Content-Type", "application/json")
-		self.end_headers()
-		self.wfile.write(b'{}')
-
 class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
 		self.send_response(200)
 		self.send_header("Content-Type", "text/plain")
-		self.send_header("Content-Dusposition", "filename='1.nzb'")
+		self.send_header("Content-Disposition", "attachment;filename=1.nzb")
 		self.send_header("X-DNZB-Category", "movie")
 		self.end_headers()
 		f = open(test_data_dir + '/1.nzb', 'rb')
 		self.wfile.write(f.read())
+		f.close()
+
+	def do_POST(self):
+		self.log_request()
+		self.send_response(200)
+		self.send_header("Content-Type", "text/xml")
+		self.end_headers()
+		f = open(test_data_dir + '/test_response.xml', 'rb')
+		response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
+		self.wfile.write(response.encode('utf-8'))
 		f.close()
 
 def TEST(statement: str, test_func):

@@ -300,10 +300,10 @@ def connectToNzbGet():
 	# First we need to know connection info: host, port and password of NZBGet server.
 	# NZBGet passes all configuration options to post-processing script as
 	# environment variables.
-	host = os.environ['NZBOP_CONTROLIP'];
-	port = os.environ['NZBOP_CONTROLPORT'];
-	username = os.environ['NZBOP_CONTROLUSERNAME'];
-	password = os.environ['NZBOP_CONTROLPASSWORD'];
+	host = os.environ['NZBOP_CONTROLIP']
+	port = os.environ['NZBOP_CONTROLPORT']
+	username = os.environ['NZBOP_CONTROLUSERNAME']
+	password = os.environ['NZBOP_CONTROLPASSWORD']
 	
 	if host == '0.0.0.0': host = '127.0.0.1'
 	
@@ -324,12 +324,12 @@ def queueNzb(filename, category, nzbcontent64):
 
 	# We need to find the id of the added nzb-file
 	groups = nzbget.listgroups()
-	groupid = 0;
+	groupid = 0
 	for group in groups:
 		if verbose:
 			print(group)
 		if group['NZBFilename'] == filename:
-			groupid = group['LastID']
+			groupid = group['NZBID']
 			break;
 
 	if verbose:

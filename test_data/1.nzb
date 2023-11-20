@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!DOCTYPE nzb PUBLIC "-//newzBin//DTD NZB 1.1//EN" "http://www.newzbin.com/DTD/nzb/nzb-1.1.dtd">
-<nzb xmlns="http://www.newzbin.com/DTD/2003/nzb">
+<!DOCTYPE nzb PUBLIC "-//newzBin//DTD NZB 1.1//EN" ">
+<nzb xmlns="">
     <file poster="Poster2 &lt;bloggs@nowhere.example&gt;" date="1071674882" subject="[01/02]  file.par2.rar (1/2)">
         <groups>
             <group>12</group>
