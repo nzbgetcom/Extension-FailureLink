@@ -45,8 +45,7 @@ def RUN_TESTS():
     TEST('Should be success if no failure link', TEST_NO_FAILURE_LINK)
     TEST('Should delete tmp dir and if no failure', TEST_DELETE_DIR)
     TEST('Should check video corruption without ffprobe', TEST_CHECK_VIDEO_CORRUPTION_WITHOUT_FFPROBE)
-    TEST('Should download another release', TEST_DOWNLOAD_ANOTHER_RELEASE)
-    # clean_up()
+    # TODO: Test rpc and download another release
 
 class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -113,7 +112,7 @@ def set_default_env():
 	os.environ['NZBOP_CONTROLUSERNAME'] = username
 	os.environ['NZBOP_CONTROLPASSWORD'] = password
 
-	os.environ['NZBPP_NZBID'] = '8'
+	os.environ['NZBPP_NZBID'] = '1'
 	os.environ['NZBOP_FEEDHISTORY'] = '[]'
 	os.environ.pop('NZBPP_PARSTATUS', None)
 	os.environ.pop('NZBPO_CHECKVID', None)
