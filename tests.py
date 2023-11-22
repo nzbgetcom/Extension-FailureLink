@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Test for VideoSort post-processing script for NZBGet.
+# Test for FailureLink post-processing script for NZBGet.
 #
 # Copyright (C) 2023 Denis <denis@nzbget.com>
 #
