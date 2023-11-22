@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # FailureLink post-processing script for NZBGet
 #
@@ -34,6 +34,7 @@
 # Author: Andrey Prygunkov (nzbget@gmail.com).
 # Further  modifications by Clinton Hall and dogzipp.
 # Web-site: http://nzbget.sourceforge.net/forum/viewforum.php?f=8.
+# Web-site: https://github.com/nzbgetcom/Extension-FailureLink/ (Python 3.9.x).
 # License: GPLv2 (http://www.gnu.org/licenses/gpl.html).
 # PP-Script Version: 1.21
 #
@@ -44,7 +45,7 @@
 # RSS). NZB-files queued from local disk don't have enough information
 # to contact the indexer site.
 #
-# NOTE: This script requires Python 2.x/3.x to be installed on your system.
+# NOTE: This script requires Python 3.9.x to be installed on your system.
 
 ##############################################################################
 ### OPTIONS                                                                ###
@@ -91,33 +92,20 @@
 
 ### NZBGET POST-PROCESSING SCRIPT                                          ###
 ##############################################################################
+
 import os
 import sys
 import platform
 import subprocess
-import traceback
 import json
 import ssl
 import cgi
 import shutil
-from subprocess import call
+import stat
 from base64 import standard_b64encode
-
-# Python2 xmlrpc handling
-try:
-    from xmlrpc.client import ServerProxy
-except ImportError:
-    from xmlrpclib import ServerProxy
-
-# Python2 urllib handling
-try:
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError
-except ImportError:
-    from urlparse import urlparse
-    from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
+from xmlrpc.client import ServerProxy
+import urllib.request, urllib.error
+from urllib.error import HTTPError
 
 # Exit codes used by NZBGet
 POSTPROCESS_SUCCESS=93
@@ -281,13 +269,13 @@ def downloadNzb(failure_link):
 	
 	try:
 		headers = {'User-Agent' : 'NZBGet (FailureLink)'}
-		req = Request(failure_link, None, headers)
+		req = urllib.request.Request(failure_link, None, headers)
 		try:
-			response = urlopen(req)
+			response = urllib.request.urlopen(req)
 		except:
 			print('[WARNING] SSL certificate verify failed, retry with bypass SSL cert.')
 			context = ssl._create_unverified_context()
-			response = urlopen(req, context=context)
+			response = urllib.request.urlopen(req, context=context)
 		else:
 			pass
 		if download_another_release:
@@ -312,10 +300,10 @@ def connectToNzbGet():
 	# First we need to know connection info: host, port and password of NZBGet server.
 	# NZBGet passes all configuration options to post-processing script as
 	# environment variables.
-	host = os.environ['NZBOP_CONTROLIP'];
-	port = os.environ['NZBOP_CONTROLPORT'];
-	username = os.environ['NZBOP_CONTROLUSERNAME'];
-	password = os.environ['NZBOP_CONTROLPASSWORD'];
+	host = os.environ['NZBOP_CONTROLIP']
+	port = os.environ['NZBOP_CONTROLPORT']
+	username = os.environ['NZBOP_CONTROLUSERNAME']
+	password = os.environ['NZBOP_CONTROLPASSWORD']
 	
 	if host == '0.0.0.0': host = '127.0.0.1'
 	
@@ -336,12 +324,12 @@ def queueNzb(filename, category, nzbcontent64):
 
 	# We need to find the id of the added nzb-file
 	groups = nzbget.listgroups()
-	groupid = 0;
+	groupid = 0
 	for group in groups:
 		if verbose:
 			print(group)
 		if group['NZBFilename'] == filename:
-			groupid = group['LastID']
+			groupid = group['NZBID']
 			break;
 
 	if verbose:
@@ -434,7 +422,7 @@ def main():
         if verbose:
                 print(headers)
 
-        if not nzbcontent or nzbcontent[0:5] != '<?xml':
+        if not nzbcontent or nzbcontent[0:5] != b'<?xml':
                 print('[INFO] No other releases found')
                 if verbose and nzbcontent:
                         print(nzbcontent)
@@ -455,7 +443,7 @@ def main():
 
         # Parsing category from headers
 
-        category = headers.get('X-DNZB-Category', '');
+        category = headers.get('X-DNZB-Category', '')
         if verbose:
                 print('category: %s' % category)
 
