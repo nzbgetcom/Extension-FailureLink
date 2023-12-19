@@ -19,79 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-##############################################################################
-### NZBGET POST-PROCESSING SCRIPT                                          ###
 
-# Check videos to determine if they are corrupt. Inform indexer site about failed
-# or corrupt download and request a replacement nzb.
-#
-# If download fails, or video files are corrupt,  the script sends info about the
-# failure to indexer site, so a replacement NZB (same movie or TV episode) can be
-# queued up if available. The indexer site must support DNZB-Header.
-# "X-DNZB-FailureLink".
-#
-# Info about pp-script:
-# Author: Andrey Prygunkov (nzbget@gmail.com).
-# Further  modifications by Clinton Hall and dogzipp.
-# Web-site: http://nzbget.sourceforge.net/forum/viewforum.php?f=8.
-# Web-site: https://github.com/nzbgetcom/Extension-FailureLink/ (Python 3.9.x).
-# License: GPLv2 (http://www.gnu.org/licenses/gpl.html).
-# PP-Script Version: 1.21
-#
-#
-# NOTE: Make sure you run this script first (before any other PP-scripts).
-#
-# NOTE: The integration works only for downloads queued via URL (including
-# RSS). NZB-files queued from local disk don't have enough information
-# to contact the indexer site.
-#
-# NOTE: This script requires Python 3.9.x to be installed on your system.
-
-##############################################################################
-### OPTIONS                                                                ###
-
-## General
-
-# Download another release (yes, no).
-#
-# If the NZB download of a Movie or TV Show fails, request an alternate
-# NZB-file of the same release and add it to queue. If disabled the indexer
-# site is still informed about the failure but no other nzb-file is queued.
-#DownloadAnotherRelease=no
-
-# Cleanup Directory (yes, no).
-#
-# Set this to yes in order to delete all corrupt and failed Files
-#Delete=no
-
-# Print more logging messages (yes, no).
-#
-# For debugging or if you need to report a bug.
-#Verbose=no
-
-# Check videos for corruption (yes, no).
-#
-# If disabled, ignore the settings below.
-#CheckVid=no
-
-# Absolute path for ffprobe.
-#
-# Enter the full path to ffprobe or avprobe here, or leave blank to search your system path.
-#ffprobe=
-
-# Absolute path for known good video.
-#
-# This is optional and is only needed to test if ffprobe is correctly compiled and working. 
-# Enter the full path to a valid video file. 
-#testVid=
-
-# Media Extensions
-#
-# This is a list of video/media extensions that will be checked for corruption.
-#mediaExtensions=.mkv,.avi,.divx,.xvid,.mov,.wmv,.mp4,.mpg,.mpeg,.vob,.ts
-
-### NZBGET POST-PROCESSING SCRIPT                                          ###
-##############################################################################
 
 import os
 import sys

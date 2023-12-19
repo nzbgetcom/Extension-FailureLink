@@ -15,7 +15,7 @@
 # GNU Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with the program.  If not, see <http://www.gnu.org/licenses/>.
+# along with the program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
 import sys
@@ -99,7 +99,7 @@ def clean_up():
 
 def run_script():
 	sys.stdout.flush()
-	proc = subprocess.Popen([get_python(), root_dir + '/FailureLink.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
+	proc = subprocess.Popen([get_python(), root_dir + '/main.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
 	out, err = proc.communicate()
 	ret_code = proc.returncode
 	return (out.decode(), int(ret_code), err.decode())
