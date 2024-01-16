@@ -7,7 +7,7 @@
 	"version": "3.0.0",
 	"author": "Andrey Prygunkov",
 	"license": "GNU",
-	"about": "Check videos to determine if they are corrupt. Inform indexer site about failed or corrupt download and request a replacement nzb.",
+	"about": "Checks videos to determine if they are corrupt. Inform indexer site about failed or corrupt download and request a replacement nzb.",
 	"queueEvents": "",
 	"description": [
 		"If download fails, or video files are corrupt, the script sends info about the",
