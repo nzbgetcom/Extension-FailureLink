@@ -1,8 +1,11 @@
 > **Note:** this repo is a fork of the original github [project](https://github.com/nzbget/FailureLink)
 > made by @hugbug.
 
-> **Note:** This script is compatible with NZBGet v23 and above.
-For older versions of NZBGet please use [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0) release.
+## NZBGet Versions
+
+- pre-release v23+  [v3.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v3.0)
+- stable  v22 [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0)
+- legacy  v21 [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0)
 
 > **Note:** This script is compatible with python 3.8.x and above.
 If you need support for Python 2.x or older Python3.x versions please use [v1.21](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v1.21) release.
