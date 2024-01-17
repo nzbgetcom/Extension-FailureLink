@@ -1,0 +1,123 @@
+{
+	"main": "main.py",
+	"name": "FailureLink",
+	"homepage": "https://github.com/nzbgetcom/Extension-FailureLink/",
+	"kind": "POST-PROCESSING",
+	"displayName": "Failure Link",
+	"version": "3.0.0",
+	"author": "Andrey Prygunkov",
+	"license": "GNU",
+	"about": "Checks videos to determine if they are corrupt. Inform indexer site about failed or corrupt download and request a replacement nzb.",
+	"queueEvents": "",
+	"description": [
+		"If download fails, or video files are corrupt, the script sends info about the",
+		"failure to indexer site, so a replacement NZB (same movie or TV episode) can be",
+		"queued up if available. The indexer site must support DNZB-Header.",
+		"\"X-DNZB-FailureLink\".",
+		"",
+		"Further modifications by Clinton Hall and dogzipp."
+	],
+	"requirements": [
+		"Make sure you run this script first (before any other PP-scripts).",
+		"The integration works only for downloads queued via URL (including RSS).",
+		"NZB-files queued from local disk don't have enough information to contact the indexer site.",
+		"",
+		"This script requires Python 3.8.x to be installed on your system."
+	],
+	"options": [
+		{
+			"name": "DownloadAnotherRelease",
+			"displayName": "DownloadAnotherRelease",
+			"value": "no",
+			"description": [
+				"Download another release.",
+				"",
+				"If the NZB download of a Movie or TV Show fails, request an alternate",
+				"NZB-file of the same release and add it to queue. If disabled the indexer",
+				"site is still informed about the failure but no other nzb-file is queued."
+			],
+			"select": [
+				"yes",
+				"no"
+			]
+		},
+		{
+			"name": "Delete",
+			"displayName": "Delete",
+			"value": "no",
+			"description": [
+				"Cleanup Directory.",
+				"",
+				"Set this to yes in order to delete all corrupt and failed Files."
+			],
+			"select": [
+				"yes",
+				"no"
+			]
+		},
+		{
+			"name": "Verbose",
+			"displayName": "Verbose",
+			"value": "no",
+			"description": [
+				"Print more logging messages.",
+				"",
+				"For debugging or if you need to report a bug."
+			],
+			"select": [
+				"yes",
+				"no"
+			]
+		},
+		{
+			"name": "CheckVid",
+			"displayName": "CheckVid",
+			"value": "no",
+			"description": [
+				"Check videos for corruption.",
+				"",
+				"If disabled, ignore the settings below."
+			],
+			"select": [
+				"yes",
+				"no"
+			]
+		},
+		{
+			"name": "ffprobe",
+			"displayName": "ffprobe",
+			"value": "",
+			"description": [
+				"Absolute path for ffprobe.",
+				"",
+				"Enter the full path to ffprobe or avprobe here, or leave blank to search your system path."
+			],
+			"select": []
+		},
+		{
+			"name": "testVid",
+			"displayName": "TestVid",
+			"value": "",
+			"description": [
+				"Absolute path for known good video.",
+				"",
+				"This is optional and is only needed to test if ffprobe is correctly compiled and working.",
+				"Enter the full path to a valid video file. "
+			],
+			"select": []
+		},
+		{
+			"name": "mediaExtensions",
+			"displayName": "MediaExtensions",
+			"value": ".mkv,.avi,.divx,.xvid,.mov,.wmv,.mp4,.mpg,.mpeg,.vob,.ts",
+			"description": [
+				"Media Extensions.",
+				"",
+				"This is a list of video/media extensions that will be checked for corruption."
+			],
+			"select": []
+		}
+	],
+	"commands": [],
+	"taskTime": ""
+}
