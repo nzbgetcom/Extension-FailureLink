@@ -4,7 +4,7 @@
 	"homepage": "https://github.com/nzbgetcom/Extension-FailureLink/",
 	"kind": "POST-PROCESSING",
 	"displayName": "Failure Link",
-	"version": "3.0.0",
+	"version": "3.1",
 	"author": "Andrey Prygunkov",
 	"license": "GNU",
 	"about": "Checks videos to determine if they are corrupt. Inform indexer site about failed or corrupt download and request a replacement nzb.",

@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <array>
 <data>
+<value>
+<struct>
+<member><name>NZBID</name><value><i4>2</i4></value></member>
+<member><name>NZBFilename</name><value><string>2.nzb</string></value></member>
+</struct>
+</value>
 <value>
 <struct>
 <member><name>NZBID</name><value><i4>1</i4></value></member>

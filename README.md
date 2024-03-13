@@ -3,9 +3,8 @@
 
 ## NZBGet Versions
 
-- pre-release v23+  [v3.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v3.0)
-- stable  v22 [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0)
-- legacy  v21 [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0)
+- pre-release v23+ [v3.1](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v3.1)
+- stable v22 [v2.0](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v2.0)
 
 > **Note:** This script is compatible with python 3.8.x and above.
 If you need support for Python 2.x or older Python3.x versions please use [v1.21](https://github.com/nzbgetcom/Extension-FailureLink/releases/tag/v1.21) release.
