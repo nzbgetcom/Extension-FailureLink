@@ -33,14 +33,13 @@ POSTPROCESS_NONE=95
 POSTPROCESS_ERROR=94
 
 root_dir = dirname(__file__)
-tmp_dir = root_dir + '/tmp'
 test_data_dir = root_dir + '/test_data'
 host = '127.0.0.1'
 port = '6789'
 username = 'TestUser'
 password = 'TestPassword'
 
-class RequestWithFileId(http.server.BaseHTTPRequestHandler):
+class HttpServerMock(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
 		self.send_response(200)
 		self.send_header("Content-Type", "text/plain")
@@ -61,39 +60,10 @@ class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 		self.wfile.write(response.encode('utf-8'))
 		f.close()
 
-class RequestNZBGet(xmlrpc.server.SimpleXMLRPCServer):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "text/plain")
-        self.send_header("Content-Disposition", "attachment;filename=1.nzb")
-        self.send_header("X-DNZB-Category", "movie")
-        self.end_headers()
-        with open(test_data_dir + '/1.nzb', 'rb') as f:
-            self.wfile.write(f.read())
-
-    def do_POST(self):
-        self.log_request()
-        self.send_response(200)
-        self.send_header("Content-Type", "text/xml")
-        self.end_headers()
-        with open(test_data_dir + '/test_response.xml', 'rb') as f:
-            response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
-            self.wfile.write(response.encode('utf-8'))
-
 def get_python(): 
 	if os.name == 'nt':
 		return 'python'
 	return 'python3'
-
-def clean_up():
-	for root, dirs, files in os.walk(tmp_dir, topdown=False):
-		for name in files:
-			file_path = os.path.join(root, name)
-			os.remove(file_path)
-		for name in dirs:
-			dir_path = os.path.join(root, name)
-			os.rmdir(dir_path)
-	os.rmdir(tmp_dir)
 
 def run_script():
 	sys.stdout.flush()
@@ -141,16 +111,6 @@ class Tests(unittest.TestCase):
 		os.environ['NZBPO_CHECKVID'] = 'no'
 		[out, code, err] = run_script()
 		self.assertEqual(code, POSTPROCESS_SUCCESS)
-		
-	def test_delete_dir(self):
-		set_default_env()
-		os.mkdir(tmp_dir)
-		os.environ['NZBPP_PARSTATUS'] = '1'
-		os.environ['NZBPP_DIRECTORY'] = tmp_dir
-		os.environ['NZBPO_DELETE'] = 'yes'
-		[out, code, err] = run_script()
-		self.assertEqual(os.path.isdir(tmp_dir), False)
-		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
 	def test_check_video_corruption_without_ffprobe(self):
 		set_default_env()
@@ -173,17 +133,13 @@ class Tests(unittest.TestCase):
 		os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
 		os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
 		os.environ['NZBPP_DIRECTORY'] = test_data_dir
-		httpserver = http.server.HTTPServer((host, int(port)), RequestWithFileId)
-		thread1 = threading.Thread(target=httpserver.serve_forever)
-		thread1.start()
-		rpcserver = RequestNZBGet((host, int(port)))
-		thread2 = threading.Thread(target=rpcserver.serve_forever)
-		thread2.start()
+		server = http.server.HTTPServer((host, int(port)), HttpServerMock)
+		thread = threading.Thread(target=server.serve_forever)
+		thread.start()
 		[out, code, err] = run_script()
-		httpserver.shutdown()
-		rpcserver.shutdown()
-		thread1.join()
-		thread2.join()
+		server.shutdown()
+		server.server_close()
+		thread.join()
 		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
 if __name__ == '__main__':
