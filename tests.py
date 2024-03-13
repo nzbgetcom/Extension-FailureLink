@@ -21,11 +21,12 @@
 import sys
 from os.path import dirname
 import os
-import traceback
 import subprocess
 import http.server
 import xmlrpc
+import xmlrpc.server
 import threading
+import unittest
 
 POSTPROCESS_SUCCESS=93
 POSTPROCESS_NONE=95
@@ -38,14 +39,6 @@ host = '127.0.0.1'
 port = '6789'
 username = 'TestUser'
 password = 'TestPassword'
-
-def RUN_TESTS():
-    TEST('Should not be executed if nzbget version is incompatible', TEST_COMPATIBALE_NZBGET_VERSION)
-    TEST('Should be success if no failure and no video check ', TEST_NOT_FAILURE_NOT_VIDEOCHECK)
-    TEST('Should be success if no failure link', TEST_NO_FAILURE_LINK)
-    TEST('Should delete tmp dir and if no failure', TEST_DELETE_DIR)
-    TEST('Should check video corruption without ffprobe', TEST_CHECK_VIDEO_CORRUPTION_WITHOUT_FFPROBE)
-    # TODO: Test rpc and download another release
 
 class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -68,19 +61,24 @@ class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 		self.wfile.write(response.encode('utf-8'))
 		f.close()
 
-def TEST(statement: str, test_func):
-	print('\n********************************************************')
-	print('TEST:', statement)
-	print('--------------------------------------------------------')
+class RequestNZBGet(xmlrpc.server.SimpleXMLRPCServer):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain")
+        self.send_header("Content-Disposition", "attachment;filename=1.nzb")
+        self.send_header("X-DNZB-Category", "movie")
+        self.end_headers()
+        with open(test_data_dir + '/1.nzb', 'rb') as f:
+            self.wfile.write(f.read())
 
-	try:
-		test_func()
-		print(test_func.__name__, '...SUCCESS')
-	except Exception as e:
-		print(test_func.__name__, '...FAILED')
-		traceback.print_exc()
-	finally:
-		print('********************************************************\n')
+    def do_POST(self):
+        self.log_request()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/xml")
+        self.end_headers()
+        with open(test_data_dir + '/test_response.xml', 'rb') as f:
+            response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
+            self.wfile.write(response.encode('utf-8'))
 
 def get_python(): 
 	if os.name == 'nt':
@@ -124,68 +122,69 @@ def set_default_env():
 	os.environ.pop('NZBPO_MEDIAEXTENSIONS', None)
 	os.environ.pop('NZBPO_FFPROBE', None)
 
+class Tests(unittest.TestCase):
+	def test_compitable_nzbget_version(self):
+		os.environ.pop('NZBOP_FEEDHISTORY', None)
+		[out, code, err] = run_script()
+		self.assertEqual(code, POSTPROCESS_ERROR)
 
-def TEST_COMPATIBALE_NZBGET_VERSION():
-	os.environ.pop('NZBOP_FEEDHISTORY', None)
-	[out, code, err] = run_script()
-	assert('*** NZBGet post-processing script ***' in out)
-	assert('This script is supposed to be called from nzbget (12.0 or later).' in out)
-	assert(code == POSTPROCESS_ERROR)
+	def test_not_failure_not_videocheck(self):
+		set_default_env()
+		os.environ['NZBPP_PARSTATUS'] = '0'
+		os.environ['NZBPO_CHECKVID'] = 'no'
+		[out, code, err] = run_script()
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
+		
+	def test_no_failure_link(self):
+		set_default_env()
+		os.environ['NZBPP_PARSTATUS'] = '1'
+		os.environ['NZBPO_CHECKVID'] = 'no'
+		[out, code, err] = run_script()
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
+		
+	def test_delete_dir(self):
+		set_default_env()
+		os.mkdir(tmp_dir)
+		os.environ['NZBPP_PARSTATUS'] = '1'
+		os.environ['NZBPP_DIRECTORY'] = tmp_dir
+		os.environ['NZBPO_DELETE'] = 'yes'
+		[out, code, err] = run_script()
+		self.assertEqual(os.path.isdir(tmp_dir), False)
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
-def TEST_NOT_FAILURE_NOT_VIDEOCHECK():
-	set_default_env()
-	os.environ['NZBPP_PARSTATUS'] = '0'
-	os.environ['NZBPO_CHECKVID'] = 'no'
-	[out, code, err] = run_script()
-	assert(code == POSTPROCESS_SUCCESS)
-	
-def TEST_NO_FAILURE_LINK():
-	set_default_env()
-	os.environ['NZBPP_PARSTATUS'] = '1'
-	os.environ['NZBPO_CHECKVID'] = 'no'
-	[out, code, err] = run_script()
-	assert(code == POSTPROCESS_SUCCESS)
-	
-def TEST_DELETE_DIR():
-	set_default_env()
-	os.mkdir(tmp_dir)
-	os.environ['NZBPP_PARSTATUS'] = '1'
-	os.environ['NZBPP_DIRECTORY'] = tmp_dir
-	os.environ['NZBPO_DELETE'] = 'yes'
-	[out, code, err] = run_script()
-	assert(os.path.isdir(tmp_dir) == False)
-	assert(code == POSTPROCESS_SUCCESS)
+	def test_check_video_corruption_without_ffprobe(self):
+		set_default_env()
+		os.environ['NZBPP_PARSTATUS'] = '0'
+		os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'no'
+		os.environ['NZBPR__DNZB_FAILURE'] = 'https://link'
+		os.environ['NZBPO_CHECKVID'] = 'yes'
+		os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
+		os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
+		os.environ['NZBPP_DIRECTORY'] = test_data_dir
+		[out, code, err] = run_script()
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
+		
+	def test_downlaod_another_release(self):
+		set_default_env()
+		os.environ['NZBPP_PARSTATUS'] = '1'
+		os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'yes'
+		os.environ['NZBPR__DNZB_FAILURE'] = 'http://127.0.0.1:6789'
+		os.environ['NZBPO_CHECKVID'] = 'yes'
+		os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
+		os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
+		os.environ['NZBPP_DIRECTORY'] = test_data_dir
+		httpserver = http.server.HTTPServer((host, int(port)), RequestWithFileId)
+		thread1 = threading.Thread(target=httpserver.serve_forever)
+		thread1.start()
+		rpcserver = RequestNZBGet((host, int(port)))
+		thread2 = threading.Thread(target=rpcserver.serve_forever)
+		thread2.start()
+		[out, code, err] = run_script()
+		httpserver.shutdown()
+		rpcserver.shutdown()
+		thread1.join()
+		thread2.join()
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
-def TEST_CHECK_VIDEO_CORRUPTION_WITHOUT_FFPROBE():
-	set_default_env()
-	os.environ['NZBPP_PARSTATUS'] = '0'
-	os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'no'
-	os.environ['NZBPR__DNZB_FAILURE'] = 'https://link'
-	os.environ['NZBPO_CHECKVID'] = 'yes'
-	os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
-	os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
-	os.environ['NZBPP_DIRECTORY'] = test_data_dir
-	[out, code, err] = run_script()
-	assert('[WARNING] Failed to locate ffprobe, video corruption detection disabled!' in out)
-	assert('[WARNING] Install ffmpeg with x264 support to enable this feature  ...' in out)
-	assert(code == POSTPROCESS_SUCCESS)
-	
-def TEST_DOWNLOAD_ANOTHER_RELEASE():
-	set_default_env()
-	os.environ['NZBPP_PARSTATUS'] = '1'
-	os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'yes'
-	os.environ['NZBPR__DNZB_FAILURE'] = 'http://127.0.0.1:6789'
-	os.environ['NZBPO_CHECKVID'] = 'yes'
-	os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
-	os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
-	os.environ['NZBPP_DIRECTORY'] = test_data_dir
-	server = http.server.HTTPServer((host, int(port)), RequestWithFileId)
-	thread = threading.Thread(target=server.serve_forever)
-	thread.start()
-	[out, code, err] = run_script()
-	server.shutdown()
-	thread.join()
-	assert('[INFO] Requesting another release from indexer site' in out)
-	assert(code == POSTPROCESS_SUCCESS)
-
-RUN_TESTS()
+if __name__ == '__main__':
+	unittest.main()

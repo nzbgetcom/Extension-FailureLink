@@ -27,13 +27,14 @@ import platform
 import subprocess
 import json
 import ssl
-import cgi
 import shutil
 import stat
 from base64 import standard_b64encode
 from xmlrpc.client import ServerProxy
 import urllib.request, urllib.error
 from urllib.error import HTTPError
+from email.message import EmailMessage
+import xml.etree.ElementTree as ET
 
 # Exit codes used by NZBGet
 POSTPROCESS_SUCCESS=93
@@ -76,11 +77,11 @@ if CHECKVIDEO and not FFPROBE:
         FFPROBE = os.path.join(PROGRAM_DIR, 'avprobe')
     else:
         try:
-            FFPROBE = subprocess.Popen(['which', 'ffprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
+            FFPROBE = subprocess.Popen(['which', 'ffprobe'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()
         except: pass
         if not FFPROBE: 
             try:
-                FFPROBE = subprocess.Popen(['which', 'avprobe'], stdout=subprocess.PIPE).communicate()[0].strip()
+                FFPROBE = subprocess.Popen(['which', 'avprobe'], stdout=subprocess.PIPE).communicate()[0].decode('utf-8').strip()
             except: pass
 if CHECKVIDEO and FFPROBE:
     result = 1
@@ -237,7 +238,7 @@ def connectToNzbGet():
 	
 	# Build an URL for XML-RPC requests
 	# TODO: encode username and password in URL-format
-	rpcUrl = 'http://%s:%s@%s:%s/xmlrpc' % (username, password, host, port);
+	rpcUrl = 'http://%s:%s@%s:%s/xmlrpc' % (username, password, host, port)
 	
 	# Create remote server object
 	nzbget = ServerProxy(rpcUrl)
@@ -251,14 +252,19 @@ def queueNzb(filename, category, nzbcontent64):
 	nzbget.append(filename, category, 0, True, nzbcontent64, True, '', 0, 'ALL')
 
 	# We need to find the id of the added nzb-file
-	groups = nzbget.listgroups()
-	groupid = 0
+	root = ET.fromstring(nzbget.listgroups().data)
+	groups = root.findall('.//struct')
+
 	for group in groups:
+		nzb_id = group.find(".//member[name='NZBID']/value/i4").text
+		nzb_filename = group.find(".//member[name='NZBFilename']/value/string").text
+
 		if verbose:
-			print(group)
-		if group['NZBFilename'] == filename:
-			groupid = group['NZBID']
-			break;
+			print(f'NZBID: {nzb_id}, NZBFilename: {nzb_filename}')
+
+		if nzb_filename == filename:
+			groupid = int(nzb_id)
+			break
 
 	if verbose:
 		print('GroupID: %i' % groupid)
@@ -267,7 +273,7 @@ def queueNzb(filename, category, nzbcontent64):
 
 
 def setupDnzbHeaders(groupid, headers):
-	for header in headers.headers:
+	for header in headers:
 		if verbose:
 			print(header.strip())
 		if header[0:7] == 'X-DNZB-':
@@ -359,13 +365,11 @@ def main():
         print('[INFO] Another release found, adding to queue')
         sys.stdout.flush()
 
-        # Parsing filename from headers
+        # Parsing filename from header
+        msg = EmailMessage()
+        msg['Content-Disposition'] = headers.get('Content-Disposition', '')
+        filename = msg.get_filename()
 
-        params = cgi.parse_header(headers.get('Content-Disposition', ''))
-        if verbose:
-                print(params)
-
-        filename = params[1].get('filename', '')
         if verbose:
                 print('filename: %s' % filename)
 
