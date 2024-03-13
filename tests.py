@@ -40,7 +40,7 @@ port = '6789'
 username = 'TestUser'
 password = 'TestPassword'
 
-class RequestWithFileId(http.server.BaseHTTPRequestHandler):
+class HttpServerMock(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
 		self.send_response(200)
 		self.send_header("Content-Type", "text/plain")
@@ -60,25 +60,6 @@ class RequestWithFileId(http.server.BaseHTTPRequestHandler):
 		response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
 		self.wfile.write(response.encode('utf-8'))
 		f.close()
-
-class RequestNZBGet(xmlrpc.server.SimpleXMLRPCServer):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "text/plain")
-        self.send_header("Content-Disposition", "attachment;filename=1.nzb")
-        self.send_header("X-DNZB-Category", "movie")
-        self.end_headers()
-        with open(test_data_dir + '/1.nzb', 'rb') as f:
-            self.wfile.write(f.read())
-
-    def do_POST(self):
-        self.log_request()
-        self.send_response(200)
-        self.send_header("Content-Type", "text/xml")
-        self.end_headers()
-        with open(test_data_dir + '/test_response.xml', 'rb') as f:
-            response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
-            self.wfile.write(response.encode('utf-8'))
 
 def get_python(): 
 	if os.name == 'nt':
@@ -173,17 +154,13 @@ class Tests(unittest.TestCase):
 		os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
 		os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
 		os.environ['NZBPP_DIRECTORY'] = test_data_dir
-		httpserver = http.server.HTTPServer((host, int(port)), RequestWithFileId)
-		thread1 = threading.Thread(target=httpserver.serve_forever)
-		thread1.start()
-		rpcserver = RequestNZBGet((host, int(port)))
-		thread2 = threading.Thread(target=rpcserver.serve_forever)
-		thread2.start()
+		server = http.server.HTTPServer((host, int(port)), HttpServerMock)
+		thread = threading.Thread(target=server.serve_forever)
+		thread.start()
 		[out, code, err] = run_script()
-		httpserver.shutdown()
-		rpcserver.shutdown()
-		thread1.join()
-		thread2.join()
+		server.shutdown()
+		server.server_close()
+		thread.join()
 		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
 if __name__ == '__main__':
