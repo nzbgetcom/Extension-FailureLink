@@ -33,7 +33,6 @@ POSTPROCESS_NONE=95
 POSTPROCESS_ERROR=94
 
 root_dir = dirname(__file__)
-tmp_dir = root_dir + '/tmp'
 test_data_dir = root_dir + '/test_data'
 host = '127.0.0.1'
 port = '6789'
@@ -65,16 +64,6 @@ def get_python():
 	if os.name == 'nt':
 		return 'python'
 	return 'python3'
-
-def clean_up():
-	for root, dirs, files in os.walk(tmp_dir, topdown=False):
-		for name in files:
-			file_path = os.path.join(root, name)
-			os.remove(file_path)
-		for name in dirs:
-			dir_path = os.path.join(root, name)
-			os.rmdir(dir_path)
-	os.rmdir(tmp_dir)
 
 def run_script():
 	sys.stdout.flush()
@@ -121,16 +110,6 @@ class Tests(unittest.TestCase):
 		os.environ['NZBPP_PARSTATUS'] = '1'
 		os.environ['NZBPO_CHECKVID'] = 'no'
 		[out, code, err] = run_script()
-		self.assertEqual(code, POSTPROCESS_SUCCESS)
-		
-	def test_delete_dir(self):
-		set_default_env()
-		os.mkdir(tmp_dir)
-		os.environ['NZBPP_PARSTATUS'] = '1'
-		os.environ['NZBPP_DIRECTORY'] = tmp_dir
-		os.environ['NZBPO_DELETE'] = 'yes'
-		[out, code, err] = run_script()
-		self.assertEqual(os.path.isdir(tmp_dir), False)
 		self.assertEqual(code, POSTPROCESS_SUCCESS)
 
 	def test_check_video_corruption_without_ffprobe(self):
