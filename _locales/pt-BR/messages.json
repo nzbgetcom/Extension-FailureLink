@@ -1,0 +1,12 @@
+{
+  "about": "Verifica vídeos para determinar se estão corrompidos. Informa o site do indexador sobre downloads com falha ou corrompidos e solicita um NZB substituto.",
+  "checkvid_desc": "Verificar vídeos quanto a corrupção.\n\nSe desativado, ignora as configurações abaixo.",
+  "delete_desc": "Limpar Diretório.\n\nDefina como yes para excluir todos os arquivos corrompidos e com falha.",
+  "description": "Se o download falhar ou os arquivos de vídeo estiverem corrompidos, o script envia informações sobre a\nfalha ao site do indexador, para que um NZB substituto (mesmo filme ou episódio de TV) possa ser\nadicionado à fila, se disponível. O site do indexador deve suportar o cabeçalho DNZB.\n\"X-DNZB-FailureLink\".\n\nModificações adicionais por Clinton Hall e dogzipp.",
+  "downloadanotherrelease_desc": "Baixar outro lançamento.\n\nSe o download NZB de um Filme ou Série de TV falhar, solicita um arquivo NZB\nalternativo do mesmo lançamento e o adiciona à fila. Se desativado, o site do indexador\nainda será informado sobre a falha, mas nenhum outro arquivo NZB será enfileirado.",
+  "ffprobe_desc": "Caminho absoluto para o ffprobe.\n\nInsira o caminho completo para ffprobe ou avprobe aqui, ou deixe em branco para pesquisar no caminho do sistema.",
+  "mediaextensions_desc": "Extensões de Mídia.\n\nEsta é uma lista de extensões de vídeo/mídia que serão verificadas quanto a corrupção.",
+  "requirements": "Certifique-se de executar este script primeiro (antes de qualquer outro script de pós-processamento).\nA integração funciona apenas para downloads enfileirados via URL (incluindo RSS).\nArquivos NZB enfileirados a partir do disco local não possuem informações suficientes para contatar o site do indexador.\n\nEste script requer que o Python 3.8.x esteja instalado no seu sistema.",
+  "testvid_desc": "Caminho absoluto para um vídeo sabidamente válido.\n\nEste campo é opcional e só é necessário para testar se o ffprobe está corretamente compilado e funcionando.\nInsira o caminho completo para um arquivo de vídeo válido. ",
+  "verbose_desc": "Exibir mais mensagens de log.\n\nPara depuração ou se precisar reportar um bug."
+}

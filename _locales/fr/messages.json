@@ -1,0 +1,12 @@
+{
+  "about": "Vérifie les vidéos pour déterminer si elles sont corrompues. Informe le site d'indexation en cas d'échec ou de téléchargement corrompu et demande un NZB de remplacement.",
+  "checkvid_desc": "Vérifier la corruption des vidéos.\n\nSi désactivé, ignorer les paramètres ci-dessous.",
+  "delete_desc": "Nettoyer le répertoire.\n\nDéfinissez cette option sur yes pour supprimer tous les fichiers corrompus et échoués.",
+  "description": "Si le téléchargement échoue ou si les fichiers vidéo sont corrompus, le script envoie des informations sur l'échec au site d'indexation, afin qu'un NZB de remplacement (même film ou épisode de série) puisse être mis en file d'attente si disponible. Le site d'indexation doit prendre en charge l'en-tête DNZB.\n\"X-DNZB-FailureLink\".\n\nModifications supplémentaires par Clinton Hall et dogzipp.",
+  "downloadanotherrelease_desc": "Télécharger une autre version.\n\nSi le téléchargement NZB d'un film ou d'une série échoue, demander un fichier NZB alternatif de la même version et l'ajouter à la file d'attente. Si désactivé, le site d'indexation est tout de même informé de l'échec mais aucun autre fichier NZB n'est mis en file d'attente.",
+  "ffprobe_desc": "Chemin absolu vers ffprobe.\n\nEntrez le chemin complet vers ffprobe ou avprobe ici, ou laissez vide pour rechercher dans le chemin système.",
+  "mediaextensions_desc": "Extensions multimédias.\n\nCeci est une liste d'extensions vidéo/multimédia qui seront vérifiées pour détecter toute corruption.",
+  "requirements": "Assurez-vous d'exécuter ce script en premier (avant tout autre script PP).\nL'intégration fonctionne uniquement pour les téléchargements mis en file d'attente via URL (y compris RSS).\nLes fichiers NZB mis en file d'attente depuis le disque local ne contiennent pas suffisamment d'informations pour contacter le site d'indexation.\n\nCe script nécessite l'installation de Python 3.8.x sur votre système.",
+  "testvid_desc": "Chemin absolu vers une vidéo connue comme valide.\n\nCeci est facultatif et n'est nécessaire que pour tester si ffprobe est correctement compilé et fonctionnel.\nEntrez le chemin complet vers un fichier vidéo valide. ",
+  "verbose_desc": "Afficher davantage de messages de journalisation.\n\nPour le débogage ou si vous devez signaler un bogue."
+}

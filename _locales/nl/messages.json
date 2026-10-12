@@ -1,0 +1,12 @@
+{
+  "about": "Controleert video's op beschadiging. Informeert de indexeersite over een mislukte of beschadigde download en vraagt een vervangende nzb aan.",
+  "checkvid_desc": "Controleer video's op beschadiging.\n\nAls dit is uitgeschakeld, worden de onderstaande instellingen genegeerd.",
+  "delete_desc": "Map opschonen.\n\nStel dit in op yes om alle beschadigde en mislukte bestanden te verwijderen.",
+  "description": "Als een download mislukt of videobestanden beschadigd zijn, stuurt het script informatie over de\nmislukking naar de indexeersite, zodat een vervangende NZB (dezelfde film of tv-aflevering) in de\nwachtrij kan worden geplaatst indien beschikbaar. De indexeersite moet DNZB-Header ondersteunen.\n\"X-DNZB-FailureLink\".\n\nVerdere aanpassingen door Clinton Hall en dogzipp.",
+  "downloadanotherrelease_desc": "Download een andere release.\n\nAls de NZB-download van een film of tv-show mislukt, vraag dan een alternatief\nNZB-bestand van dezelfde release aan en voeg het toe aan de wachtrij. Als dit is uitgeschakeld, wordt de indexeersite\nnog steeds geïnformeerd over de mislukking, maar wordt er geen ander nzb-bestand in de wachtrij geplaatst.",
+  "ffprobe_desc": "Absoluut pad naar ffprobe.\n\nVoer hier het volledige pad naar ffprobe of avprobe in, of laat leeg om uw systeempad te doorzoeken.",
+  "mediaextensions_desc": "Media-extensies.\n\nDit is een lijst van video-/media-extensies die worden gecontroleerd op beschadiging.",
+  "requirements": "Zorg ervoor dat u dit script als eerste uitvoert (vóór andere PP-scripts).\nDe integratie werkt alleen voor downloads die via URL in de wachtrij zijn geplaatst (inclusief RSS).\nNZB-bestanden die vanaf een lokale schijf in de wachtrij zijn geplaatst, bevatten onvoldoende informatie om contact op te nemen met de indexeersite.\n\nDit script vereist dat Python 3.8.x op uw systeem is geïnstalleerd.",
+  "testvid_desc": "Absoluut pad naar een bekende goede video.\n\nDit is optioneel en is alleen nodig om te testen of ffprobe correct is gecompileerd en werkt.\nVoer het volledige pad naar een geldig videobestand in. ",
+  "verbose_desc": "Meer logberichten weergeven.\n\nVoor foutopsporing of als u een bug wilt melden."
+}

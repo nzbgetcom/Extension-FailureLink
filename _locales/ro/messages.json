@@ -1,0 +1,12 @@
+{
+  "about": "Verifică videoclipurile pentru a determina dacă sunt corupte. Informează site-ul indexer despre descărcările eșuate sau corupte și solicită un nzb de înlocuire.",
+  "checkvid_desc": "Verifică videoclipurile pentru corupție.\n\nDacă este dezactivat, ignoră setările de mai jos.",
+  "delete_desc": "Curățare director.\n\nSetați aceasta la yes pentru a șterge toate fișierele corupte și eșuate.",
+  "description": "Dacă descărcarea eșuează sau fișierele video sunt corupte, scriptul trimite informații despre\neșec către site-ul indexer, astfel încât un NZB de înlocuire (același film sau episod TV) poate fi\nadăugat în coadă dacă este disponibil. Site-ul indexer trebuie să suporte DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nModificări suplimentare de Clinton Hall și dogzipp.",
+  "downloadanotherrelease_desc": "Descarcă o altă versiune.\n\nDacă descărcarea NZB a unui Film sau Serial TV eșuează, solicită un fișier NZB\nalternativ al aceleiași versiuni și adaugă-l în coadă. Dacă este dezactivat, site-ul\nindexer este în continuare informat despre eșec, dar niciun alt fișier nzb nu este adăugat în coadă.",
+  "ffprobe_desc": "Calea absolută pentru ffprobe.\n\nIntroduceți calea completă către ffprobe sau avprobe aici, sau lăsați necompletat pentru a căuta în calea de sistem.",
+  "mediaextensions_desc": "Extensii media.\n\nAcesta este o listă de extensii video/media care vor fi verificate pentru corupție.",
+  "requirements": "Asigurați-vă că rulați acest script primul (înaintea oricăror alte scripturi PP).\nIntegrarea funcționează doar pentru descărcările adăugate în coadă prin URL (inclusiv RSS).\nFișierele NZB adăugate din discul local nu conțin suficiente informații pentru a contacta site-ul indexer.\n\nAcest script necesită instalarea Python 3.8.x pe sistemul dumneavoastră.",
+  "testvid_desc": "Calea absolută pentru un videoclip cunoscut ca valid.\n\nAcesta este opțional și este necesar doar pentru a testa dacă ffprobe este compilat corect și funcționează.\nIntroduceți calea completă către un fișier video valid. ",
+  "verbose_desc": "Afișează mai multe mesaje de jurnalizare.\n\nPentru depanare sau dacă trebuie să raportați un bug."
+}

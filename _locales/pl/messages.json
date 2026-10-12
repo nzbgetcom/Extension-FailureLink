@@ -1,0 +1,12 @@
+{
+  "about": "Sprawdza pliki wideo, aby określić, czy są uszkodzone. Informuje serwis indeksujący o nieudanym lub uszkodzonym pobraniu i żąda zastępczego pliku nzb.",
+  "checkvid_desc": "Sprawdzaj pliki wideo pod kątem uszkodzeń.\n\nJeśli wyłączone, ignoruj poniższe ustawienia.",
+  "delete_desc": "Wyczyść katalog.\n\nUstaw na yes, aby usunąć wszystkie uszkodzone i nieudane pliki.",
+  "description": "Jeśli pobieranie nie powiedzie się lub pliki wideo są uszkodzone, skrypt wysyła informacje o\nniepowodzeniu do serwisu indeksującego, aby zastępcze NZB (ten sam film lub odcinek serialu) mogło być\ndodane do kolejki, jeśli jest dostępne. Serwis indeksujący musi obsługiwać nagłówek DNZB.\n\"X-DNZB-FailureLink\".\n\nDalsze modyfikacje przez Clinton Hall i dogzipp.",
+  "downloadanotherrelease_desc": "Pobierz inne wydanie.\n\nJeśli pobieranie NZB filmu lub serialu nie powiedzie się, zażądaj alternatywnego\npliku NZB tego samego wydania i dodaj go do kolejki. Jeśli wyłączone, serwis indeksujący\njest nadal informowany o niepowodzeniu, ale żaden inny plik nzb nie jest dodawany do kolejki.",
+  "ffprobe_desc": "Bezwzględna ścieżka do ffprobe.\n\nWprowadź pełną ścieżkę do ffprobe lub avprobe, lub pozostaw puste, aby przeszukać ścieżkę systemową.",
+  "mediaextensions_desc": "Rozszerzenia multimediów.\n\nJest to lista rozszerzeń wideo/multimediów, które będą sprawdzane pod kątem uszkodzeń.",
+  "requirements": "Upewnij się, że uruchamiasz ten skrypt jako pierwszy (przed innymi skryptami PP).\nIntegracja działa tylko dla pobrań dodanych do kolejki przez URL (w tym RSS).\nPliki NZB dodane z lokalnego dysku nie zawierają wystarczających informacji, aby skontaktować się z serwisem indeksującym.\n\nTen skrypt wymaga zainstalowanego Python 3.8.x w systemie.",
+  "testvid_desc": "Bezwzględna ścieżka do znanego poprawnego pliku wideo.\n\nJest to opcjonalne i potrzebne tylko do sprawdzenia, czy ffprobe jest poprawnie skompilowane i działa.\nWprowadź pełną ścieżkę do prawidłowego pliku wideo. ",
+  "verbose_desc": "Wyświetlaj więcej komunikatów w dzienniku.\n\nDo debugowania lub gdy chcesz zgłosić błąd."
+}
