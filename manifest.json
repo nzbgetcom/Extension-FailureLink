@@ -1,7 +1,7 @@
 {
 	"main": "main.py",
 	"name": "FailureLink",
-	"homepage": "https://github.com/nzbgetcom/Extension-FailureLink/",
+	"homepage": "https://github.com/nzbgetcom/Extension-FailureLink",
 	"kind": "POST-PROCESSING",
 	"displayName": "Failure Link",
 	"version": "3.1",

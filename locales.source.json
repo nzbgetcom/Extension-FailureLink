@@ -1,0 +1,42 @@
+{
+    "about": {
+        "message": "Checks videos to determine if they are corrupt. Inform indexer site about failed or corrupt download and request a replacement nzb.",
+        "description": "Short description of the Failure Link extension shown in settings."
+    },
+    "description": {
+        "message": "If download fails, or video files are corrupt, the script sends info about the\nfailure to indexer site, so a replacement NZB (same movie or TV episode) can be\nqueued up if available. The indexer site must support DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nFurther modifications by Clinton Hall and dogzipp.",
+        "description": "Full description of the extension shown in settings. DO NOT translate header names enclosed in quotes (e.g., \"X-DNZB-FailureLink\")."
+    },
+    "requirements": {
+        "message": "Make sure you run this script first (before any other PP-scripts).\nThe integration works only for downloads queued via URL (including RSS).\nNZB-files queued from local disk don't have enough information to contact the indexer site.\n\nThis script requires Python 3.8.x to be installed on your system.",
+        "description": "System requirements (each requirement is a separate string). DO NOT translate technical version strings (e.g., Python 3.8.x)."
+    },
+    "downloadanotherrelease_desc": {
+        "message": "Download another release.\n\nIf the NZB download of a Movie or TV Show fails, request an alternate\nNZB-file of the same release and add it to queue. If disabled the indexer\nsite is still informed about the failure but no other nzb-file is queued.",
+        "description": "Help text for the DownloadAnotherRelease option in Failure Link. DO NOT translate the fixed values 'yes' and 'no'."
+    },
+    "delete_desc": {
+        "message": "Cleanup Directory.\n\nSet this to yes in order to delete all corrupt and failed Files.",
+        "description": "Help text for the Delete option in Failure Link. DO NOT translate the fixed values 'yes' and 'no'."
+    },
+    "verbose_desc": {
+        "message": "Print more logging messages.\n\nFor debugging or if you need to report a bug.",
+        "description": "Help text for the Verbose option in Failure Link."
+    },
+    "checkvid_desc": {
+        "message": "Check videos for corruption.\n\nIf disabled, ignore the settings below.",
+        "description": "Help text for the CheckVid option in Failure Link."
+    },
+    "ffprobe_desc": {
+        "message": "Absolute path for ffprobe.\n\nEnter the full path to ffprobe or avprobe here, or leave blank to search your system path.",
+        "description": "Help text for the ffprobe option in Failure Link. DO NOT translate command names 'ffprobe' and 'avprobe'."
+    },
+    "testvid_desc": {
+        "message": "Absolute path for known good video.\n\nThis is optional and is only needed to test if ffprobe is correctly compiled and working.\nEnter the full path to a valid video file. ",
+        "description": "Help text for the testVid option in Failure Link. DO NOT translate command name 'ffprobe'."
+    },
+    "mediaextensions_desc": {
+        "message": "Media Extensions.\n\nThis is a list of video/media extensions that will be checked for corruption.",
+        "description": "Help text for the mediaExtensions option in Failure Link."
+    }
+}

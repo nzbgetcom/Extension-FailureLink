@@ -23,6 +23,7 @@ from os.path import dirname
 import os
 import subprocess
 import http.server
+import json
 import xmlrpc
 import xmlrpc.server
 import threading
@@ -42,24 +43,27 @@ password = 'TestPassword'
 
 class HttpServerMock(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
+		with open(test_data_dir + '/1.nzb', 'rb') as f:
+			data = f.read()
 		self.send_response(200)
 		self.send_header("Content-Type", "text/plain")
 		self.send_header("Content-Disposition", "attachment;filename=1.nzb")
 		self.send_header("X-DNZB-Category", "movie")
+		self.send_header("Content-Length", str(len(data)))
 		self.end_headers()
-		f = open(test_data_dir + '/1.nzb', 'rb')
-		self.wfile.write(f.read())
-		f.close()
+		self.wfile.write(data)
 
 	def do_POST(self):
 		self.log_request()
+		with open(test_data_dir + '/test_response.xml', 'rb') as f:
+			file_data = f.read()
+		response = xmlrpc.client.dumps((file_data,), allow_none=False, encoding=None)
+		body = response.encode('utf-8')
 		self.send_response(200)
 		self.send_header("Content-Type", "text/xml")
+		self.send_header("Content-Length", str(len(body)))
 		self.end_headers()
-		f = open(test_data_dir + '/test_response.xml', 'rb')
-		response = xmlrpc.client.dumps((f.read(),), allow_none=False, encoding=None)
-		self.wfile.write(response.encode('utf-8'))
-		f.close()
+		self.wfile.write(body)
 
 def get_python(): 
 	if os.name == 'nt':
@@ -214,6 +218,13 @@ class UnitTests(unittest.TestCase):
 		self.assertIn('TestUser:TestPassword@', url)
 		self.assertIn('127.0.0.1:6789', url)
 		self.assertIn('/xmlrpc', url)
+
+	def test_manifest(self):
+		with open(root_dir + '/manifest.json', encoding='utf-8') as file:
+			try:
+				json.loads(file.read())
+			except ValueError as e:
+				self.fail('manifest.json is not valid.')
 
 if __name__ == '__main__':
 	unittest.main()
