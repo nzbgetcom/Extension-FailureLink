@@ -1,0 +1,12 @@
+{
+  "about": "Kontroluje videa, zda nejsou poškozená. Informuje indexovací web o neúspěšném nebo poškozeném stažení a požádá o náhradní nzb.",
+  "checkvid_desc": "Zkontrolovat videa na poškození.\n\nPokud je zakázáno, níže uvedená nastavení budou ignorována.",
+  "delete_desc": "Vyčistit adresář.\n\nNastavte na yes, chcete-li smazat všechny poškozené a neúspěšné soubory.",
+  "description": "Pokud stažení selže nebo jsou video soubory poškozené, skript odešle informace o\nselhání na indexovací web, aby mohl být zařazen do fronty náhradní NZB (stejný film nebo epizoda seriálu),\npokud je k dispozici. Indexovací web musí podporovat DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nDalší úpravy od Clintona Halla a dogzipp.",
+  "downloadanotherrelease_desc": "Stáhnout jiné vydání.\n\nPokud stažení NZB filmu nebo TV pořadu selže, požádá o alternativní\nNZB-soubor stejného vydání a přidá ho do fronty. Pokud je tato možnost zakázána, indexovací\nweb je stále informován o selhání, ale žádný jiný nzb-soubor není zařazen do fronty.",
+  "ffprobe_desc": "Absolutní cesta k ffprobe.\n\nZadejte úplnou cestu k ffprobe nebo avprobe, nebo ponechte prázdné pro vyhledání v systémové cestě.",
+  "mediaextensions_desc": "Mediální přípony.\n\nToto je seznam přípon video/mediálních souborů, které budou kontrolovány na poškození.",
+  "requirements": "Ujistěte se, že spustíte tento skript jako první (před jakýmikoli jinými PP-skripty).\nIntegrace funguje pouze pro stahování zařazená do fronty přes URL (včetně RSS).\nNZB-soubory zařazené z lokálního disku nemají dostatek informací pro kontaktování indexovacího webu.\n\nTento skript vyžaduje instalaci Python 3.8.x ve vašem systému.",
+  "testvid_desc": "Absolutní cesta k ověřenému funkčnímu videu.\n\nToto je volitelné a je potřeba pouze k otestování, zda je ffprobe správně zkompilováno a funkční.\nZadejte úplnou cestu k platnému video souboru. ",
+  "verbose_desc": "Zobrazit více zpráv v protokolu.\n\nPro ladění nebo pokud potřebujete nahlásit chybu."
+}

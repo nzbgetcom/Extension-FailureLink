@@ -1,0 +1,12 @@
+{
+  "about": "Überprüft Videos auf Beschädigungen. Informiert die Indexer-Seite über fehlgeschlagene oder beschädigte Downloads und fordert eine Ersatz-NZB an.",
+  "checkvid_desc": "Videos auf Beschädigungen prüfen.\n\nWenn deaktiviert, werden die folgenden Einstellungen ignoriert.",
+  "delete_desc": "Verzeichnis bereinigen.\n\nSetzen Sie dies auf yes, um alle beschädigten und fehlgeschlagenen Dateien zu löschen.",
+  "description": "Wenn ein Download fehlschlägt oder Videodateien beschädigt sind, sendet das Skript Informationen über den\nFehler an die Indexer-Seite, damit eine Ersatz-NZB (gleicher Film oder gleiche TV-Episode) in die\nWarteschlange aufgenommen werden kann, falls verfügbar. Die Indexer-Seite muss den DNZB-Header unterstützen.\n\"X-DNZB-FailureLink\".\n\nWeitere Änderungen von Clinton Hall und dogzipp.",
+  "downloadanotherrelease_desc": "Eine andere Version herunterladen.\n\nWenn der NZB-Download eines Films oder einer TV-Serie fehlschlägt, wird eine alternative\nNZB-Datei derselben Version angefordert und zur Warteschlange hinzugefügt. Wenn deaktiviert, wird die Indexer-\nSeite weiterhin über den Fehler informiert, aber keine weitere NZB-Datei wird in die Warteschlange gestellt.",
+  "ffprobe_desc": "Absoluter Pfad für ffprobe.\n\nGeben Sie hier den vollständigen Pfad zu ffprobe oder avprobe ein, oder lassen Sie das Feld leer, um den Systempfad zu durchsuchen.",
+  "mediaextensions_desc": "Medienerweiterungen.\n\nDies ist eine Liste von Video-/Medienerweiterungen, die auf Beschädigungen überprüft werden.",
+  "requirements": "Stellen Sie sicher, dass Sie dieses Skript zuerst ausführen (vor allen anderen PP-Skripten).\nDie Integration funktioniert nur für Downloads, die über eine URL in die Warteschlange gestellt wurden (einschließlich RSS).\nNZB-Dateien, die von der lokalen Festplatte in die Warteschlange gestellt wurden, enthalten nicht genügend Informationen, um die Indexer-Seite zu kontaktieren.\n\nDieses Skript erfordert, dass Python 3.8.x auf Ihrem System installiert ist.",
+  "testvid_desc": "Absoluter Pfad für ein bekanntes fehlerfreies Video.\n\nDies ist optional und wird nur benötigt, um zu testen, ob ffprobe korrekt kompiliert ist und funktioniert.\nGeben Sie den vollständigen Pfad zu einer gültigen Videodatei ein. ",
+  "verbose_desc": "Mehr Protokollmeldungen ausgeben.\n\nZur Fehlersuche oder wenn Sie einen Fehler melden müssen."
+}

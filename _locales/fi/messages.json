@@ -1,0 +1,12 @@
+{
+  "about": "Tarkistaa videot vioittumisen varalta. Ilmoittaa indeksointisivustolle epäonnistuneesta tai vioittuneesta latauksesta ja pyytää korvaavaa nzb-tiedostoa.",
+  "checkvid_desc": "Tarkista videot vioittumisen varalta.\n\nJos poistettu käytöstä, ohita alla olevat asetukset.",
+  "delete_desc": "Siivoa hakemisto.\n\nAseta tämä arvoon yes poistaaksesi kaikki vioittuneet ja epäonnistuneet tiedostot.",
+  "description": "Jos lataus epäonnistuu tai videotiedostot ovat vioittuneet, skripti lähettää tiedon\nepäonnistumisesta indeksointisivustolle, jotta korvaava NZB (sama elokuva tai TV-jakso) voidaan\nlisätä jonoon, jos saatavilla. Indeksointisivuston on tuettava DNZB-otsikkoa.\n\"X-DNZB-FailureLink\".\n\nLisämuokkaukset: Clinton Hall ja dogzipp.",
+  "downloadanotherrelease_desc": "Lataa toinen julkaisu.\n\nJos elokuvan tai TV-sarjan NZB-lataus epäonnistuu, pyydä vaihtoehtoinen\nNZB-tiedosto samasta julkaisusta ja lisää se jonoon. Jos poistettu käytöstä, indeksointisivustolle\nilmoitetaan silti epäonnistumisesta, mutta muuta nzb-tiedostoa ei jonota.",
+  "ffprobe_desc": "Absoluuttinen polku ffprobe-ohjelmalle.\n\nSyötä tähän ffprobe- tai avprobe-ohjelman täydellinen polku, tai jätä tyhjäksi etsiäksesi järjestelmäpolustasi.",
+  "mediaextensions_desc": "Mediatiedostopäätteet.\n\nTämä on luettelo video-/mediatiedostopäätteistä, jotka tarkistetaan vioittumisen varalta.",
+  "requirements": "Varmista, että suoritat tämän skriptin ensin (ennen muita PP-skriptejä).\nIntegraatio toimii vain URL-osoitteen kautta jonotetuille latauksille (mukaan lukien RSS).\nPaikalliselta levyltä jonotetuissa NZB-tiedostoissa ei ole riittävästi tietoja indeksointisivuston yhteystietoja varten.\n\nTämä skripti vaatii Python 3.8.x:n asennettuna järjestelmääsi.",
+  "testvid_desc": "Absoluuttinen polku tunnetulle toimivalle videolle.\n\nTämä on valinnainen ja tarvitaan vain testataksesi, onko ffprobe oikein käännetty ja toimiva.\nSyötä täydellinen polku kelvolliseen videotiedostoon. ",
+  "verbose_desc": "Tulosta enemmän lokiviestejä.\n\nVianetsintää varten tai jos sinun täytyy raportoida virheestä."
+}

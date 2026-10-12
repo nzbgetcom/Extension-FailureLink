@@ -1,0 +1,12 @@
+{
+  "about": "Kontrollerer videoer for at afgøre, om de er korrupte. Informerer indekseringsstedet om mislykkede eller korrupte downloads og anmoder om en erstatnings-nzb.",
+  "checkvid_desc": "Kontroller videoer for korruption.\n\nHvis deaktiveret, ignoreres indstillingerne nedenfor.",
+  "delete_desc": "Ryd mappe op.\n\nSæt dette til yes for at slette alle korrupte og mislykkede filer.",
+  "description": "Hvis et download mislykkes, eller videofiler er korrupte, sender scriptet oplysninger om\nfejlen til indekseringsstedet, så en erstatnings-NZB (samme film eller TV-afsnit) kan\nsættes i kø, hvis den er tilgængelig. Indekseringsstedet skal understøtte DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nYderligere ændringer af Clinton Hall og dogzipp.",
+  "downloadanotherrelease_desc": "Download en anden udgivelse.\n\nHvis NZB-download af en film eller TV-serie mislykkes, anmodes om en alternativ\nNZB-fil af samme udgivelse og tilføjes til køen. Hvis deaktiveret, informeres indekseringsstedet\nstadig om fejlen, men ingen anden nzb-fil sættes i kø.",
+  "ffprobe_desc": "Absolut sti til ffprobe.\n\nAngiv den fulde sti til ffprobe eller avprobe her, eller lad feltet være tomt for at søge i systemstien.",
+  "mediaextensions_desc": "Medieudvidelser.\n\nDette er en liste over video-/medieudvidelser, der vil blive kontrolleret for korruption.",
+  "requirements": "Sørg for at køre dette script først (før andre PP-scripts).\nIntegrationen fungerer kun for downloads sat i kø via URL (inklusive RSS).\nNZB-filer sat i kø fra lokal disk har ikke nok oplysninger til at kontakte indekseringsstedet.\n\nDette script kræver, at Python 3.8.x er installeret på dit system.",
+  "testvid_desc": "Absolut sti til en kendt god video.\n\nDette er valgfrit og er kun nødvendigt for at teste, om ffprobe er korrekt kompileret og fungerer.\nAngiv den fulde sti til en gyldig videofil. ",
+  "verbose_desc": "Udskriv flere logbeskeder.\n\nTil fejlfinding eller hvis du skal rapportere en fejl."
+}
