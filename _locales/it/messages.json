@@ -1,0 +1,12 @@
+{
+  "about": "Controlla i video per determinare se sono corrotti. Informa il sito dell'indexer riguardo a download falliti o corrotti e richiede un nzb sostitutivo.",
+  "checkvid_desc": "Controlla i video per rilevare corruzioni.\n\nSe disabilitato, ignora le impostazioni seguenti.",
+  "delete_desc": "Pulizia della directory.\n\nImpostare su yes per eliminare tutti i file corrotti e falliti.",
+  "description": "Se il download fallisce, o i file video sono corrotti, lo script invia informazioni sul\nfallimento al sito dell'indexer, in modo che un NZB sostitutivo (stesso film o episodio TV) possa essere\naggiunto alla coda se disponibile. Il sito dell'indexer deve supportare DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nUlteriori modifiche di Clinton Hall e dogzipp.",
+  "downloadanotherrelease_desc": "Scarica un'altra release.\n\nSe il download NZB di un film o di una serie TV fallisce, richiede un file NZB\nalternativo della stessa release e lo aggiunge alla coda. Se disabilitato, il sito\ndell'indexer viene comunque informato del fallimento ma nessun altro file nzb viene accodato.",
+  "ffprobe_desc": "Percorso assoluto per ffprobe.\n\nInserisci il percorso completo di ffprobe o avprobe, oppure lascia vuoto per cercare nel percorso di sistema.",
+  "mediaextensions_desc": "Estensioni multimediali.\n\nQuesto è un elenco di estensioni video/multimediali che verranno controllate per rilevare corruzioni.",
+  "requirements": "Assicurati di eseguire questo script per primo (prima di qualsiasi altro script PP).\nL'integrazione funziona solo per i download accodati tramite URL (incluso RSS).\nI file NZB accodati dal disco locale non dispongono di informazioni sufficienti per contattare il sito dell'indexer.\n\nQuesto script richiede l'installazione di Python 3.8.x sul sistema.",
+  "testvid_desc": "Percorso assoluto per un video noto come valido.\n\nQuesto è opzionale ed è necessario solo per verificare se ffprobe è compilato correttamente e funzionante.\nInserisci il percorso completo di un file video valido. ",
+  "verbose_desc": "Stampa più messaggi di log.\n\nPer il debug o se è necessario segnalare un bug."
+}

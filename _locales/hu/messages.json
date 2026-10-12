@@ -1,0 +1,12 @@
+{
+  "about": "Ellenőrzi a videókat, hogy sérültek-e. Értesíti az indexer oldalt a sikertelen vagy sérült letöltésről, és helyettesítő nzb-t kér.",
+  "checkvid_desc": "Videók ellenőrzése sérülés szempontjából.\n\nHa le van tiltva, az alábbi beállítások figyelmen kívül maradnak.",
+  "delete_desc": "Könyvtár megtisztítása.\n\nÁllítsa ezt yes értékre az összes sérült és sikertelen fájl törléséhez.",
+  "description": "Ha a letöltés sikertelen, vagy a videófájlok sérültek, a szkript elküldi a\nhiba adatait az indexer oldalnak, hogy egy helyettesítő NZB (ugyanaz a film vagy TV-epizód) sorba\nállítható legyen, ha elérhető. Az indexer oldalnak támogatnia kell a DNZB-fejlécet.\n\"X-DNZB-FailureLink\".\n\nTovábbi módosítások: Clinton Hall és dogzipp.",
+  "downloadanotherrelease_desc": "Másik kiadás letöltése.\n\nHa egy film vagy TV-műsor NZB-letöltése sikertelen, kérjen alternatív\nNZB-fájlt ugyanabból a kiadásból, és adja hozzá a sorhoz. Ha le van tiltva, az indexer\noldal még mindig értesül a hibáról, de más nzb-fájl nem kerül sorba.",
+  "ffprobe_desc": "Az ffprobe abszolút elérési útja.\n\nAdja meg az ffprobe vagy avprobe teljes elérési útját, vagy hagyja üresen a rendszer útvonalában való kereséshez.",
+  "mediaextensions_desc": "Médiaextenzók.\n\nEz azon videó/média kiterjesztések listája, amelyek sérülés szempontjából ellenőrzésre kerülnek.",
+  "requirements": "Győződjön meg arról, hogy ezt a szkriptet futtatja először (minden más PP-szkript előtt).\nAz integráció csak URL-en keresztül sorba állított letöltéseknél működik (beleértve az RSS-t).\nA helyi lemezről sorba állított NZB-fájlok nem tartalmaznak elegendő információt az indexer oldal eléréséhez.\n\nEhhez a szkripthez Python 3.8.x telepítése szükséges a rendszeren.",
+  "testvid_desc": "Ismert, hibátlan videó abszolút elérési útja.\n\nEz opcionális, és csak arra szükséges, hogy tesztelje, az ffprobe megfelelően van-e fordítva és működik-e.\nAdja meg egy érvényes videófájl teljes elérési útját. ",
+  "verbose_desc": "További naplóüzenetek megjelenítése.\n\nHibakereséshez vagy ha hibát kell jelentenie."
+}

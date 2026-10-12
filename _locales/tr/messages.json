@@ -1,0 +1,12 @@
+{
+  "about": "Videoların bozuk olup olmadığını kontrol eder. İndeksleyici siteyi başarısız veya bozuk indirme hakkında bilgilendirir ve yedek bir nzb talep eder.",
+  "checkvid_desc": "Videoları bozukluk açısından kontrol et.\n\nDevre dışı bırakılırsa aşağıdaki ayarlar yoksayılır.",
+  "delete_desc": "Dizini Temizle.\n\nTüm bozuk ve başarısız dosyaları silmek için bunu yes olarak ayarlayın.",
+  "description": "İndirme başarısız olursa veya video dosyaları bozuksa, betik başarısızlık hakkında\nindeksleyici siteye bilgi gönderir; böylece mevcut olması durumunda yedek bir NZB\n(aynı film veya TV bölümü) sıraya eklenebilir. İndeksleyici site DNZB-Header'ı desteklemelidir.\n\"X-DNZB-FailureLink\".\n\nClinton Hall ve dogzipp tarafından yapılan ek değişiklikler.",
+  "downloadanotherrelease_desc": "Başka bir sürüm indir.\n\nBir Film veya TV Dizisinin NZB indirmesi başarısız olursa, aynı sürümün alternatif bir\nNZB dosyasını talep et ve sıraya ekle. Devre dışı bırakılırsa indeksleyici site yine de\nbaşarısızlık hakkında bilgilendirilir ancak başka bir nzb dosyası sıraya eklenmez.",
+  "ffprobe_desc": "ffprobe için mutlak yol.\n\nffprobe veya avprobe'un tam yolunu buraya girin ya da sistem yolunuzda arama yapmak için boş bırakın.",
+  "mediaextensions_desc": "Medya Uzantıları.\n\nBozukluk açısından kontrol edilecek video/medya uzantılarının listesidir.",
+  "requirements": "Bu betiği önce (diğer PP-betiklerinden önce) çalıştırdığınızdan emin olun.\nEntegrasyon yalnızca URL üzerinden (RSS dahil) sıraya eklenen indirmeler için çalışır.\nYerel diskten sıraya eklenen NZB dosyaları, indeksleyici siteyle iletişim kurmak için yeterli bilgiye sahip değildir.\n\nBu betik, sisteminizde Python 3.8.x'in kurulu olmasını gerektirir.",
+  "testvid_desc": "Bilinen iyi bir video için mutlak yol.\n\nBu isteğe bağlıdır ve yalnızca ffprobe'un doğru derlenip çalışıp çalışmadığını test etmek için gereklidir.\nGeçerli bir video dosyasının tam yolunu girin. ",
+  "verbose_desc": "Daha fazla günlük mesajı yazdır.\n\nHata ayıklama için veya bir hata bildirmeniz gerektiğinde kullanın."
+}

@@ -1,0 +1,12 @@
+{
+  "about": "Kontrollerar videor för att avgöra om de är skadade. Informerar indexeringsplatsen om misslyckad eller skadad nedladdning och begär en ersättande nzb.",
+  "checkvid_desc": "Kontrollera videor för skador.\n\nOm inaktiverat, ignorera inställningarna nedan.",
+  "delete_desc": "Rensa katalog.\n\nSätt detta till yes för att radera alla skadade och misslyckade filer.",
+  "description": "Om nedladdningen misslyckas, eller videofiler är skadade, skickar skriptet information om\nfelet till indexeringsplatsen, så att en ersättande NZB (samma film eller TV-avsnitt) kan\nköas upp om tillgänglig. Indexeringsplatsen måste stödja DNZB-Header.\n\"X-DNZB-FailureLink\".\n\nYtterligare modifieringar av Clinton Hall och dogzipp.",
+  "downloadanotherrelease_desc": "Ladda ner en annan utgåva.\n\nOm NZB-nedladdningen av en film eller TV-serie misslyckas, begär en alternativ\nNZB-fil av samma utgåva och lägg till den i kön. Om inaktiverat informeras indexeringsplatsen\nfortfarande om felet men ingen annan nzb-fil köas.",
+  "ffprobe_desc": "Absolut sökväg för ffprobe.\n\nAnge den fullständiga sökvägen till ffprobe eller avprobe här, eller lämna tomt för att söka i systemsökvägen.",
+  "mediaextensions_desc": "Medietillägg.\n\nDetta är en lista över video-/medietillägg som kommer att kontrolleras för skador.",
+  "requirements": "Se till att du kör detta skript först (innan andra PP-skript).\nIntegrationen fungerar endast för nedladdningar köade via URL (inklusive RSS).\nNZB-filer köade från lokal disk har inte tillräcklig information för att kontakta indexeringsplatsen.\n\nDetta skript kräver att Python 3.8.x är installerat på ditt system.",
+  "testvid_desc": "Absolut sökväg för känd fungerande video.\n\nDetta är valfritt och behövs endast för att testa om ffprobe är korrekt kompilerat och fungerar.\nAnge den fullständiga sökvägen till en giltig videofil. ",
+  "verbose_desc": "Skriv ut fler loggmeddelanden.\n\nFör felsökning eller om du behöver rapportera ett fel."
+}

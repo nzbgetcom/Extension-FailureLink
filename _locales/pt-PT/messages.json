@@ -1,0 +1,12 @@
+{
+  "about": "Verifica vídeos para determinar se estão corrompidos. Informa o site do indexador sobre transferências falhadas ou corrompidas e solicita um NZB de substituição.",
+  "checkvid_desc": "Verificar vídeos quanto a corrupção.\n\nSe desativado, ignora as definições abaixo.",
+  "delete_desc": "Limpar Diretório.\n\nDefina como yes para eliminar todos os ficheiros corrompidos e falhados.",
+  "description": "Se a transferência falhar ou os ficheiros de vídeo estiverem corrompidos, o script envia informações sobre a\nfalha para o site do indexador, para que um NZB de substituição (mesmo filme ou episódio de TV) possa ser\nadicionado à fila, se disponível. O site do indexador deve suportar o cabeçalho DNZB\n\"X-DNZB-FailureLink\".\n\nModificações adicionais por Clinton Hall e dogzipp.",
+  "downloadanotherrelease_desc": "Transferir outra versão.\n\nSe a transferência NZB de um Filme ou Série de TV falhar, solicita um ficheiro NZB\nalternativo da mesma versão e adiciona-o à fila. Se desativado, o site do indexador\ncontinua a ser informado sobre a falha, mas nenhum outro ficheiro NZB é adicionado à fila.",
+  "ffprobe_desc": "Caminho absoluto para o ffprobe.\n\nIntroduza o caminho completo para o ffprobe ou avprobe, ou deixe em branco para pesquisar no caminho do sistema.",
+  "mediaextensions_desc": "Extensões de Multimédia.\n\nEsta é uma lista de extensões de vídeo/multimédia que serão verificadas quanto a corrupção.",
+  "requirements": "Certifique-se de que executa este script primeiro (antes de qualquer outro script de pós-processamento).\nA integração funciona apenas para transferências adicionadas à fila via URL (incluindo RSS).\nFicheiros NZB adicionados a partir do disco local não têm informação suficiente para contactar o site do indexador.\n\nEste script requer a instalação do Python 3.8.x no seu sistema.",
+  "testvid_desc": "Caminho absoluto para um vídeo válido conhecido.\n\nEste campo é opcional e só é necessário para testar se o ffprobe está corretamente compilado e a funcionar.\nIntroduza o caminho completo para um ficheiro de vídeo válido. ",
+  "verbose_desc": "Mostrar mais mensagens de registo.\n\nPara depuração ou se precisar de reportar um erro."
+}
