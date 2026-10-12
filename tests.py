@@ -27,6 +27,7 @@ import xmlrpc
 import xmlrpc.server
 import threading
 import unittest
+from unittest.mock import patch
 
 POSTPROCESS_SUCCESS=93
 POSTPROCESS_NONE=95
@@ -141,6 +142,78 @@ class Tests(unittest.TestCase):
 		server.server_close()
 		thread.join()
 		self.assertEqual(code, POSTPROCESS_SUCCESS)
+
+	def test_download_another_release_special_chars_password(self):
+		set_default_env()
+		os.environ['NZBOP_CONTROLPASSWORD'] = 'p@ss#w0rd%test$'
+		os.environ['NZBPP_PARSTATUS'] = '1'
+		os.environ['NZBPO_DOWNLOADANOTHERRELEASE'] = 'yes'
+		os.environ['NZBPR__DNZB_FAILURE'] = 'http://127.0.0.1:6789'
+		os.environ['NZBPO_CHECKVID'] = 'yes'
+		os.environ['NZBPO_MEDIAEXTENSIONS'] = '.mp4'
+		os.environ['NZBPO_TESTVID'] = test_data_dir + '/corrupted.mp4'
+		os.environ['NZBPP_DIRECTORY'] = test_data_dir
+		server = http.server.HTTPServer((host, int(port)), HttpServerMock)
+		thread = threading.Thread(target=server.serve_forever)
+		thread.start()
+		[out, code, err] = run_script()
+		server.shutdown()
+		server.server_close()
+		thread.join()
+		self.assertEqual(code, POSTPROCESS_SUCCESS)
+		self.assertNotIn('Traceback', err + out)
+
+
+def _load_main():
+	import importlib.util
+	spec = importlib.util.spec_from_file_location('main', root_dir + '/main.py')
+	module = importlib.util.module_from_spec(spec)
+	try:
+		spec.loader.exec_module(module)
+	except SystemExit:
+		pass
+	return module
+
+
+class UnitTests(unittest.TestCase):
+	def test_connectToNzbGet_encodes_special_chars(self):
+		os.environ['NZBOP_FEEDHISTORY'] = '[]'
+		os.environ['NZBOP_CONTROLIP'] = host
+		os.environ['NZBOP_CONTROLPORT'] = port
+		os.environ['NZBOP_CONTROLUSERNAME'] = 'user@test'
+		os.environ['NZBOP_CONTROLPASSWORD'] = 'p@ss#w0rd%test$'
+		os.environ['NZBPP_PARSTATUS'] = '0'
+		os.environ['NZBPO_CHECKVID'] = 'no'
+
+		module = _load_main()
+
+		with patch.object(module, 'ServerProxy') as mock_proxy:
+			module.connectToNzbGet()
+			url = mock_proxy.call_args[0][0]
+
+		self.assertIn('user%40test', url)
+		self.assertIn('p%40ss%23w0rd%25test%24', url)
+		self.assertIn('127.0.0.1:6789', url)
+		self.assertIn('/xmlrpc', url)
+
+	def test_connectToNzbGet_normal_password(self):
+		os.environ['NZBOP_FEEDHISTORY'] = '[]'
+		os.environ['NZBOP_CONTROLIP'] = host
+		os.environ['NZBOP_CONTROLPORT'] = port
+		os.environ['NZBOP_CONTROLUSERNAME'] = username
+		os.environ['NZBOP_CONTROLPASSWORD'] = password
+		os.environ['NZBPP_PARSTATUS'] = '0'
+		os.environ['NZBPO_CHECKVID'] = 'no'
+
+		module = _load_main()
+
+		with patch.object(module, 'ServerProxy') as mock_proxy:
+			module.connectToNzbGet()
+			url = mock_proxy.call_args[0][0]
+
+		self.assertIn('TestUser:TestPassword@', url)
+		self.assertIn('127.0.0.1:6789', url)
+		self.assertIn('/xmlrpc', url)
 
 if __name__ == '__main__':
 	unittest.main()

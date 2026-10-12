@@ -31,6 +31,7 @@ import shutil
 import stat
 from base64 import standard_b64encode
 from xmlrpc.client import ServerProxy
+from urllib.parse import quote
 import urllib.request, urllib.error
 from urllib.error import HTTPError
 from email.message import EmailMessage
@@ -237,8 +238,7 @@ def connectToNzbGet():
 	if host == '0.0.0.0': host = '127.0.0.1'
 	
 	# Build an URL for XML-RPC requests
-	# TODO: encode username and password in URL-format
-	rpcUrl = 'http://%s:%s@%s:%s/xmlrpc' % (username, password, host, port)
+	rpcUrl = 'http://%s:%s@%s:%s/xmlrpc' % (quote(username, safe=""), quote(password, safe=""), host, port)
 	
 	# Create remote server object
 	nzbget = ServerProxy(rpcUrl)
